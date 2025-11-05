@@ -2,6 +2,12 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
     
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yy"
+        return formatter
+    } ()
+    
     private lazy var errorImageView: UIImageView = {
         let errorImageView = UIImageView(image: UIImage(resource: .errorTrackersLabel))
         errorImageView.contentMode = .scaleAspectFit
@@ -42,31 +48,30 @@ final class TrackersViewController: UIViewController {
         datePicker.datePickerMode = .date
         datePicker.date = Date()
         datePicker.preferredDatePickerStyle = .compact
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         
         return datePicker
     } ()
     
     private lazy var dateLabel: UILabel = {
-            let dateLabel = UILabel()
+        let dateLabel = UILabel()
         dateLabel.backgroundColor = UIColor(resource: .lightGrayForDateLabel)
-            dateLabel.layer.cornerRadius = 8
-            dateLabel.layer.masksToBounds = true
-            dateLabel.textAlignment = .center
-            dateLabel.text = textForDateLabel()
-            dateLabel.isUserInteractionEnabled = false
-    
-            return dateLabel
-        }()
+        dateLabel.layer.cornerRadius = 8
+        dateLabel.layer.masksToBounds = true
+        dateLabel.textAlignment = .center
+        dateLabel.text = textForDateLabel()
+        dateLabel.isUserInteractionEnabled = false
+        
+        return dateLabel
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
     }
     
+    
     private func textForDateLabel() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
         return dateFormatter.string(from: datePicker.date)
     }
     
@@ -80,7 +85,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func setupConstraints () {
-            NSLayoutConstraint.activate([
+        NSLayoutConstraint.activate([
             errorImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             errorImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             errorImageView.heightAnchor.constraint(equalToConstant: 80),
@@ -111,12 +116,16 @@ final class TrackersViewController: UIViewController {
             dateLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             dateLabel.heightAnchor.constraint(equalToConstant: 34),
             dateLabel.widthAnchor.constraint(equalToConstant: 77),
-        
+            
         ])
     }
     
     @objc private func addButtonDidTap() {
         print("Add button was tapped")
+    }
+    
+    @objc private func datePickerValueChanged() {
+        dateLabel.text = textForDateLabel()
     }
 }
 
