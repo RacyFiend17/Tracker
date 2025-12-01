@@ -1,6 +1,55 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
+    let calendar = Calendar.current
+    private let id1 = UUID(), id2 = UUID(), id3 = UUID()
+    private lazy var categories: [TrackerCategory] = {
+        let tracker1 = Tracker(
+            id: id1,
+            name: "Выпить воду",
+            color: .systemBlue,
+            emoji: "💧",
+            schedule: [.monday, .wednesday, .friday],
+            trackerType: .habit, dateCreated: calendar.date(from: DateComponents(year: 2025, month: 3, day: 1))!
+        )
+        
+        let tracker2 = Tracker(
+            id: id2,
+            name: "Пробежка 3 км",
+            color: .systemRed,
+            emoji: "❤️",
+            schedule: [.monday, .tuesday],
+            trackerType: .habit, dateCreated: calendar.date(from: DateComponents(year: 2024, month: 11, day: 1))!
+        )
+        
+        let tracker3 = Tracker(
+            id: id3,
+            name: "Позвонить маме",
+            color: .systemGreen,
+            emoji: "📞",
+            schedule: [.monday, .sunday],
+            trackerType: .habit, dateCreated: calendar.date(from: DateComponents(year: 2025, month: 1, day: 1))!
+        )
+        
+        let category1 = TrackerCategory(
+            trackers: [tracker1, tracker2],
+            title: "Здоровье"
+        )
+        
+        let category2 = TrackerCategory(
+            trackers: [tracker3],
+            title: "Семья"
+        )
+        
+        return [category1, category2]
+    }()
+    private lazy var completedTrackers: [TrackerRecord] = {
+        return [
+            TrackerRecord(id: id1, date: Date()),
+            TrackerRecord(id: id1, date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
+            TrackerRecord(id: id3, date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!)
+        ]
+    }()
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -65,35 +114,38 @@ final class TrackersViewController: UIViewController {
         return dateLabel
     }()
     
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
+        collectionView.register(TrackerCellHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerCellHeader.reuseIdentifier)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        return collectionView
+    } ()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
-    }
-    
-    
-    private func textForDateLabel() -> String {
-        return dateFormatter.string(from: datePicker.date)
+        showErrorLabelAndImageViewOrCollectionView()
     }
     
     private func setupUI() {
         view.backgroundColor = .white
         
-        view.addSubviews([errorImageView, errorLabel, addButton, titleLabel, searchBar, datePicker, dateLabel])
+        view.addSubviews([addButton, titleLabel, searchBar, datePicker, dateLabel, collectionView, errorLabel, errorImageView])
         view.translatesAutoResizingMaskFalseTo(view.subviews)
         
-        setupConstraints()
+        setupMainConstraints()
     }
     
-    @objc private func setupConstraints () {
+    @objc private func setupMainConstraints () {
         NSLayoutConstraint.activate([
-            errorImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            errorImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            errorImageView.heightAnchor.constraint(equalToConstant: 80),
-            errorImageView.widthAnchor.constraint(equalToConstant: 80),
-            
-            errorLabel.topAnchor.constraint(equalTo: errorImageView.bottomAnchor, constant: 8),
-            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
             addButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 1),
             addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 6),
             addButton.widthAnchor.constraint(equalToConstant: 42),
@@ -117,7 +169,49 @@ final class TrackersViewController: UIViewController {
             dateLabel.heightAnchor.constraint(equalToConstant: 34),
             dateLabel.widthAnchor.constraint(equalToConstant: 77),
             
+            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 0),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            errorImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            errorImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            errorImageView.heightAnchor.constraint(equalToConstant: 80),
+            errorImageView.widthAnchor.constraint(equalToConstant: 80),
+            
+            errorLabel.topAnchor.constraint(equalTo: errorImageView.bottomAnchor, constant: 8),
+            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+    }
+    
+    private func showErrorLabelAndImageViewOrCollectionView() {
+        if categoriesForDate(date: datePicker.date).isEmpty{
+            collectionView.isHidden = true
+            errorLabel.isHidden = false
+            errorImageView.isHidden = false
+        } else {
+            collectionView.reloadData()
+            collectionView.isHidden = false
+            errorLabel.isHidden = true
+            errorImageView.isHidden = true
+        }
+    }
+    
+    private func categoriesForDate(date: Date) -> [TrackerCategory] {
+        return categories.filter { !filterTrackers(for: date, in: $0).isEmpty }
+    }
+    
+    private func filterTrackers(for date: Date, in category: TrackerCategory) -> [Tracker] {
+        guard let weekday = date.weekday else { return [] }
+        return category.trackers.filter { $0.schedule.contains(weekday) && $0.dateCreated <= date }
+    }
+    
+    private func textForDateLabel() -> String {
+        return dateFormatter.string(from: datePicker.date)
+    }
+    
+    private func shouldEnableButton(for date: Date) -> Bool {
+        return date < Date()
     }
     
     @objc private func addButtonDidTap() {
@@ -126,6 +220,112 @@ final class TrackersViewController: UIViewController {
     
     @objc private func datePickerValueChanged() {
         dateLabel.text = textForDateLabel()
+        showErrorLabelAndImageViewOrCollectionView()
     }
 }
 
+extension TrackersViewController: UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return categoriesForDate(date: datePicker.date).count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let suitableCategories = categoriesForDate(date: datePicker.date)
+        return filterTrackers(for: datePicker.date, in: suitableCategories[section]).count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackerCellHeader.reuseIdentifier, for: indexPath) as? TrackerCellHeader else { fatalError("There is no TrackerCellHeader")
+            }
+            let suitableCategories = categoriesForDate(date: datePicker.date)
+            let title = suitableCategories[indexPath.section].title
+            view.titleLabel.text = title
+            return view
+        default: return UICollectionReusableView()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
+            fatalError("There is no TrackerCell")
+        }
+        let suitableCategories = categoriesForDate(date: datePicker.date)
+        let tracker = filterTrackers(for: datePicker.date, in: suitableCategories[indexPath.section])[indexPath.item]
+        
+        let completedDaysCount = completedTrackers.count(where: {$0.id == tracker.id})
+        let isCompleted = completedTrackers.contains(where: {$0.id == tracker.id && $0.date == datePicker.date})
+        let isEnabled = shouldEnableButton(for: datePicker.date)
+        cell.configure(tracker: tracker, completedDaysCount: completedDaysCount, isCompleted: isCompleted, isEnabled: isEnabled)
+        
+        cell.delegate = self
+        
+        return cell
+    }
+    
+}
+
+extension TrackersViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let leftInset: CGFloat = 16
+        let rightInset: CGFloat = 16
+        let interItemSpacing: CGFloat = 9
+        let width = (collectionView.frame.width - leftInset - rightInset - interItemSpacing * 2) / 2
+        return CGSize(width: width, height: 148)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        9
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: 46)
+    }
+    
+}
+
+extension TrackersViewController: UICollectionViewDelegate {
+    
+}
+
+extension TrackersViewController: TrackerCellDelegate {
+    func didTapCompleteButton(_ cell: TrackerCell) {
+        
+        let currentChosenDate = datePicker.date
+        
+        if currentChosenDate < Date() {
+            guard let indexPath = collectionView.indexPath(for: cell) else { return }
+            
+            let suitableCategories = categoriesForDate(date: datePicker.date)
+            let tracker = filterTrackers(for: datePicker.date, in: suitableCategories[indexPath.section])[indexPath.item]
+    //        let tracker = categoriesForDate(date: currentChosenDate)[indexPath.section].trackers[indexPath.item]
+            
+            let trackerID = tracker.id
+            
+            if completedTrackers.contains(where: { $0.id == trackerID && $0.date == currentChosenDate }) {
+                let oldDaysCount = completedTrackers.count(where: { $0.id == trackerID })
+                let newDaysCount = oldDaysCount - 1
+                
+                guard let index = completedTrackers.firstIndex(where: { $0.id == trackerID && $0.date == currentChosenDate }) else { return }
+                completedTrackers.remove(at: index)
+                
+                cell.changeDaysCountInDaysLabel(newDaysCount)
+                cell.changeButtonState(isCompleted: false)
+            } else {
+                let oldDaysCount = completedTrackers.count(where: { $0.id == trackerID })
+                let newDaysCount = oldDaysCount + 1
+                
+                completedTrackers.append(TrackerRecord(id: trackerID, date: currentChosenDate))
+                
+                cell.changeDaysCountInDaysLabel(newDaysCount)
+                cell.changeButtonState(isCompleted: true)
+            }
+        }
+    }
+}
