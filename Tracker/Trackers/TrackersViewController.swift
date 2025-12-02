@@ -43,7 +43,7 @@ final class TrackersViewController: UIViewController {
         
         return [category1, category2]
     }()
-    private lazy var completedTrackers: [TrackerRecord] = {
+    private lazy var completedTrackers: Set<TrackerRecord> = {
         return [
             TrackerRecord(id: id1, date: Date()),
             TrackerRecord(id: id1, date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
@@ -215,7 +215,8 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func addButtonDidTap() {
-        print("Add button was tapped")
+        let vc = CreateTrackerTypeViewController()
+        self.present(vc, animated: true, completion: nil)
     }
     
     @objc private func datePickerValueChanged() {
@@ -304,24 +305,17 @@ extension TrackersViewController: TrackerCellDelegate {
             
             let suitableCategories = categoriesForDate(date: datePicker.date)
             let tracker = filterTrackers(for: datePicker.date, in: suitableCategories[indexPath.section])[indexPath.item]
-    //        let tracker = categoriesForDate(date: currentChosenDate)[indexPath.section].trackers[indexPath.item]
+            let oldDaysCount = completedTrackers.filter { $0.id == tracker.id }.count
             
-            let trackerID = tracker.id
-            
-            if completedTrackers.contains(where: { $0.id == trackerID && $0.date == currentChosenDate }) {
-                let oldDaysCount = completedTrackers.count(where: { $0.id == trackerID })
+            if completedTrackers.contains(TrackerRecord(id: tracker.id, date: currentChosenDate)) {
                 let newDaysCount = oldDaysCount - 1
-                
-                guard let index = completedTrackers.firstIndex(where: { $0.id == trackerID && $0.date == currentChosenDate }) else { return }
-                completedTrackers.remove(at: index)
+                completedTrackers.remove(TrackerRecord(id: tracker.id, date: currentChosenDate))
                 
                 cell.changeDaysCountInDaysLabel(newDaysCount)
                 cell.changeButtonState(isCompleted: false)
             } else {
-                let oldDaysCount = completedTrackers.count(where: { $0.id == trackerID })
                 let newDaysCount = oldDaysCount + 1
-                
-                completedTrackers.append(TrackerRecord(id: trackerID, date: currentChosenDate))
+                completedTrackers.insert(TrackerRecord(id: tracker.id, date: currentChosenDate))
                 
                 cell.changeDaysCountInDaysLabel(newDaysCount)
                 cell.changeButtonState(isCompleted: true)
@@ -329,3 +323,11 @@ extension TrackersViewController: TrackerCellDelegate {
         }
     }
 }
+
+extension TrackersViewController: CreateTrackerViewControllerDelegate {
+    func didCreateTracker(_ tracker: Tracker) {
+        //TODO:
+        collectionView.reloadData()
+    }
+}
+
