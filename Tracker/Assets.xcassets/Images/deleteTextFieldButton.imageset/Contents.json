@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Button 34x34 (3).png",
+      "filename" : "xmark.circle@1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Button 34x34 (1).png",
+      "filename" : "xmark.circle@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Button 34x34 (2).png",
+      "filename" : "xmark.circle@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

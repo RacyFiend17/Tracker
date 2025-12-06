@@ -141,10 +141,10 @@ final class TrackersViewController: UIViewController {
         view.addSubviews([addButton, titleLabel, searchBar, datePicker, dateLabel, collectionView, errorLabel, errorImageView])
         view.translatesAutoResizingMaskFalseTo(view.subviews)
         
-        setupMainConstraints()
+        setupConstraints()
     }
     
-    @objc private func setupMainConstraints () {
+    @objc private func setupConstraints () {
         NSLayoutConstraint.activate([
             addButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 1),
             addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 6),
