@@ -3,7 +3,7 @@ import UIKit
 final class CreateTrackerViewController: UIViewController {
     
     private var trackerConfig: AddTrackerConfig
-    private var chosenDays: [Weekday]?
+    private var chosenDays: [Weekday] = []
     
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
@@ -51,7 +51,6 @@ final class CreateTrackerViewController: UIViewController {
         button.titleLabel?.textAlignment = .center
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(createButtonDidTap), for: .touchUpInside)
-        button.isEnabled = false
         return button
     } ()
     
@@ -160,8 +159,10 @@ extension CreateTrackerViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
             
-            let titles = trackerConfig.navigationCellItems
+            let titles = trackerConfig.navigationCellTitles
+            let subtitles = trackerConfig.navigationCellSubtitles
             let title = titles[indexPath.row]
+            let subtitle = indexPath.row < subtitles.count ? subtitles[indexPath.row] : nil
             
             let isLast = indexPath.row == titles.count - 1
             let isFirst = indexPath.row == 0
@@ -178,6 +179,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
             let showSeparator = !isLast
             
             cell.configure(title: title,
+                           subtitle: subtitle,
                            showSeparator: showSeparator,
                            roundedCorners: cornerStyle)
             
@@ -200,25 +202,27 @@ extension CreateTrackerViewController: UITableViewDelegate {
 }
 
 extension CreateTrackerViewController: ScheduleViewControllerDelegate {
-    func didSelectDays(_ days: [Weekday]) {
-        chosenDays = days
+    func didSelectDays(_ days: Set<Weekday>) {
+        if !days.isEmpty {
+            
+            
+            var daysString = ""
+            
+            switch days.count {
+                case 7:
+                daysString = "Каждый день"
+                default :
+                let sortedDays = days.sorted { $0.rawValue < $1.rawValue }
+                chosenDays = sortedDays
+                daysString = sortedDays.map { $0.shortRuName }.joined(separator: ", ")
+            }
+            
+            trackerConfig.navigationCellSubtitles[1] = daysString
+            
+            let indexPath = IndexPath(row: 1, section: 1)
+            tableView.reloadRows(at: [indexPath], with: .none)
+        }
     }
 }
 
-protocol AddTrackerConfig {
-    var title: String { get }
-    var isRegularTracker: Bool { get }
-    var navigationCellItems: [String] { get }
-}
 
-struct HabitConfig: AddTrackerConfig {
-    let title = "Новая привычка"
-    let isRegularTracker = true
-    let navigationCellItems = ["Категория", "Расписание"]
-}
-
-struct IrregularConfig: AddTrackerConfig {
-    let title = "Новое нерегулярное событие"
-    let isRegularTracker = false
-    let navigationCellItems = ["Категория"]
-}

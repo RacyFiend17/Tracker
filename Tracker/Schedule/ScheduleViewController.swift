@@ -3,6 +3,7 @@ import UIKit
 final class ScheduleViewController: UIViewController {
     
     weak var delegate: ScheduleViewControllerDelegate?
+    private var chosenDays: Set<Weekday> = []
     
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
@@ -40,9 +41,7 @@ final class ScheduleViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.dataSource = self
-        
         setupUI()
     }
     
@@ -53,7 +52,6 @@ final class ScheduleViewController: UIViewController {
         view.translatesAutoResizingMaskFalseTo(view.subviews)
         
         setupConstraints()
-        
     }
     
     @objc private func setupConstraints () {
@@ -75,18 +73,18 @@ final class ScheduleViewController: UIViewController {
     }
     
     @objc private func doneButtonDidTap() {
-        
+        delegate?.didSelectDays(chosenDays)
         dismiss(animated: true)
     }
 }
 
 extension ScheduleViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        1
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        7
+        return 7
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -113,11 +111,28 @@ extension ScheduleViewController: UITableViewDataSource {
                        showSeparator: showSeparator,
                        roundedCorners: cornerStyle)
         
+        cell.delegate = self
+        
         return cell
         
     }
 }
 
 protocol ScheduleViewControllerDelegate: AnyObject {
-    func didSelectDays(_ days: [Weekday])
+    func didSelectDays(_ days: Set<Weekday>)
+}
+
+extension ScheduleViewController: ScheduleCellDelegate {
+    func switchButtonChangedValue(_ cell: ScheduleCell, isOn: Bool) {
+        if isOn {
+            guard let indexPath = tableView.indexPath(for: cell) else {
+                print("Failed to get index path for ScheduleCell")
+                return
+            }
+            guard let day = Weekday(rawValue: indexPath.row) else {
+                return
+            }
+            chosenDays.insert(day)
+        }
+    }
 }

@@ -10,7 +10,7 @@ final class TextFieldCell: UITableViewCell {
         textField.backgroundColor = UIColor(resource: .ypGray).withAlphaComponent(0.3)
         textField.layer.cornerRadius = 16
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 1))
         textField.leftViewMode = .always
         textField.clearButtonMode = .whileEditing
         

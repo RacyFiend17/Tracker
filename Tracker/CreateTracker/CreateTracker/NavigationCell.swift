@@ -13,14 +13,22 @@ final class NavigationCell: UITableViewCell {
     }()
     
     private let arrowImageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.image = UIImage(resource: .arrowForNavigationCell)
-            return imageView
-        }()
+        let imageView = UIImageView()
+        imageView.image = UIImage(resource: .arrowForNavigationCell)
+        return imageView
+    }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.textColor = .ypBlack
+        return label
+    }()
+    
+    private let subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.textColor = .ypGray
         return label
     }()
     
@@ -29,6 +37,13 @@ final class NavigationCell: UITableViewCell {
         separator.backgroundColor = UIColor.black.withAlphaComponent(0.15)
         separator.isHidden = true
         return separator
+    }()
+    
+    private let verticalStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 2
+        return stackView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -44,7 +59,10 @@ final class NavigationCell: UITableViewCell {
         backgroundColor = .clear
         selectionStyle = .none
         
-        contentView.addSubviews([containerView, arrowImageView, titleLabel, separatorView])
+        verticalStackView.addArrangedSubview(titleLabel)
+        verticalStackView.addArrangedSubview(subtitleLabel)
+        
+        contentView.addSubviews([verticalStackView, containerView, arrowImageView, separatorView])
         contentView.translatesAutoResizingMaskFalseTo(contentView.subviews)
         
         
@@ -60,9 +78,9 @@ final class NavigationCell: UITableViewCell {
             arrowImageView.widthAnchor.constraint(equalToConstant: 24),
             arrowImageView.heightAnchor.constraint(equalToConstant: 24),
             
-            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: arrowImageView.trailingAnchor, constant: -16),
-            titleLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            verticalStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            verticalStackView.trailingAnchor.constraint(equalTo: arrowImageView.trailingAnchor, constant: -16),
+            verticalStackView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             
             separatorView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             separatorView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
@@ -71,8 +89,13 @@ final class NavigationCell: UITableViewCell {
         ])
     }
     
-    func configure(title: String, showSeparator: Bool, roundedCorners: UIRectCorner?) {
+    func configure(title: String, subtitle: String?, showSeparator: Bool, roundedCorners: UIRectCorner?) {
         titleLabel.text = title
+        guard let subtitle else {
+            self.subtitleLabel.text = nil
+            return
+        }
+        subtitleLabel.text = subtitle
         separatorView.isHidden = !showSeparator
         
         if let corners = roundedCorners {
@@ -81,5 +104,9 @@ final class NavigationCell: UITableViewCell {
         } else {
             containerView.layer.cornerRadius = 0
         }
+    }
+    
+    func addSubtitle(_ subtitle: String) {
+        subtitleLabel.text = subtitle
     }
 }

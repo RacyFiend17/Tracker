@@ -3,6 +3,7 @@ import UIKit
 final class ScheduleCell: UITableViewCell {
     
     static let reuseIdentifier = "ScheduleCell"
+    weak var delegate: ScheduleCellDelegate?
     
     private let containerView: UIView = {
         let view = UIView()
@@ -13,10 +14,11 @@ final class ScheduleCell: UITableViewCell {
     }()
     
     private let switchButton: UISwitch = {
-            let switchButton = UISwitch()
-            switchButton.isOn = false
-            return switchButton
-        }()
+        let switchButton = UISwitch()
+        switchButton.isOn = false
+        switchButton.addTarget(self, action: #selector(switchButtonChangedValue), for: .valueChanged)
+        return switchButton
+    }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -81,4 +83,13 @@ final class ScheduleCell: UITableViewCell {
             containerView.layer.cornerRadius = 0
         }
     }
+    
+    @objc private func switchButtonChangedValue() {
+        print("2")
+        delegate?.switchButtonChangedValue(self, isOn: self.switchButton.isOn)
+    }
+}
+
+protocol ScheduleCellDelegate: AnyObject {
+    func switchButtonChangedValue(_ cell: ScheduleCell, isOn: Bool)
 }
