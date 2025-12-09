@@ -1,7 +1,7 @@
 import Foundation
 
 enum Weekday: Int, CaseIterable {
-    case monday = 0, tuesday, wednesday, thursday, friday, saturday, sunday
+    case monday = 1, tuesday, wednesday, thursday, friday, saturday, sunday
     
     var ruName: String {
         switch self {

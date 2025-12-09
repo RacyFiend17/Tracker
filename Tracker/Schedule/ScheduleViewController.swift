@@ -129,7 +129,7 @@ extension ScheduleViewController: ScheduleCellDelegate {
                 print("Failed to get index path for ScheduleCell")
                 return
             }
-            guard let day = Weekday(rawValue: indexPath.row) else {
+            guard let day = Weekday(rawValue: indexPath.row + 1) else {
                 return
             }
             chosenDays.insert(day)

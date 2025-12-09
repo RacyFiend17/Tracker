@@ -9,7 +9,7 @@ final class TrackersViewController: UIViewController {
             name: "Выпить воду",
             color: .systemBlue,
             emoji: "💧",
-            schedule: [.monday, .wednesday, .friday],
+            schedule: [.monday],
             trackerType: .habit, dateCreated: calendar.date(from: DateComponents(year: 2025, month: 3, day: 1))!
         )
         
@@ -18,7 +18,7 @@ final class TrackersViewController: UIViewController {
             name: "Пробежка 3 км",
             color: .systemRed,
             emoji: "❤️",
-            schedule: [.monday, .tuesday],
+            schedule: [.monday],
             trackerType: .habit, dateCreated: calendar.date(from: DateComponents(year: 2024, month: 11, day: 1))!
         )
         
@@ -27,12 +27,12 @@ final class TrackersViewController: UIViewController {
             name: "Позвонить маме",
             color: .systemGreen,
             emoji: "📞",
-            schedule: [.monday, .sunday],
+            schedule: [.monday],
             trackerType: .habit, dateCreated: calendar.date(from: DateComponents(year: 2025, month: 1, day: 1))!
         )
         
         let category1 = TrackerCategory(
-            trackers: [tracker1, tracker2],
+            trackers: [tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2],
             title: "Здоровье"
         )
         
@@ -133,6 +133,10 @@ final class TrackersViewController: UIViewController {
         
         setupUI()
         showErrorLabelAndImageViewOrCollectionView()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupUI() {
@@ -143,6 +147,11 @@ final class TrackersViewController: UIViewController {
         
         setupConstraints()
     }
+
+
+@objc func dismissKeyboard() {
+    view.endEditing(true)
+}
     
     @objc private func setupConstraints () {
         NSLayoutConstraint.activate([
@@ -288,7 +297,6 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 46)
     }
-    
 }
 
 extension TrackersViewController: UICollectionViewDelegate {
@@ -321,6 +329,7 @@ extension TrackersViewController: TrackerCellDelegate {
                 cell.changeButtonState(isCompleted: true)
             }
         }
+        collectionView.reloadData()
     }
 }
 

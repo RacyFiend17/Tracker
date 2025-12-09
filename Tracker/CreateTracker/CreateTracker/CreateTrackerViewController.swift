@@ -70,6 +70,10 @@ final class CreateTrackerViewController: UIViewController {
         tableView.dataSource = self
         
         setupUI()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupUI() {
@@ -103,6 +107,10 @@ final class CreateTrackerViewController: UIViewController {
             createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             createButton.heightAnchor.constraint(equalTo: cancelButton.heightAnchor),
         ])
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     @objc private func cancelButtonDidTap() {
@@ -193,6 +201,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
 
 extension CreateTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        view.endEditing(true)
         if indexPath.section == 1 && indexPath.row == 1 {
             let vc = ScheduleViewController()
             vc.delegate = self

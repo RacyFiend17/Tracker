@@ -85,7 +85,6 @@ final class ScheduleCell: UITableViewCell {
     }
     
     @objc private func switchButtonChangedValue() {
-        print("2")
         delegate?.switchButtonChangedValue(self, isOn: self.switchButton.isOn)
     }
 }
