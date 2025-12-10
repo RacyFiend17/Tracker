@@ -1,9 +1,25 @@
 import UIKit
 
+// MARK: - Protocols
+
+protocol CreateTrackerViewControllerDelegate: AnyObject {
+    func didCreateTracker(_ tracker: Tracker, with categoryName: String)
+}
+
+protocol CreateTrackerTypeDismissDelegate: AnyObject {
+    func dismissCreateTrackerTypeViewController()
+}
+
+// MARK: - CreateTrackerViewController
+
 final class CreateTrackerViewController: UIViewController {
     
+    // MARK: - Delegates
+
     weak var delegate: CreateTrackerViewControllerDelegate?
     weak var parentTypeControllerDelegate: CreateTrackerTypeDismissDelegate?
+    
+    // MARK: - Properties
     
     private var trackerConfig: AddTrackerConfig
     private var chosenTrackerSchedule: [Weekday] = []
@@ -12,6 +28,8 @@ final class CreateTrackerViewController: UIViewController {
     private var chosenTrackerEmoji: String = "🥵"
     private var chosenTrackerColor: UIColor = UIColor(resource: .ypGreen)
     var dateOfTrackerCreation = Date()
+    
+    // MARK: - UI Components
     
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
@@ -63,6 +81,8 @@ final class CreateTrackerViewController: UIViewController {
         return button
     } ()
     
+    // MARK: - Initializer
+    
     init(trackerConfig: AddTrackerConfig) {
         self.trackerConfig = trackerConfig
         super.init(nibName: nil, bundle: nil)
@@ -72,19 +92,18 @@ final class CreateTrackerViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        tableView.delegate = self
-        tableView.dataSource = self
-        
+        setupTableViewDelegateAndDataSource()
         setupUI()
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+        setupGestureRecognizers()
     }
+    
+    // MARK: - Setup Methods
     
     private func setupUI() {
         view.backgroundColor = .white
@@ -118,6 +137,8 @@ final class CreateTrackerViewController: UIViewController {
             createButton.heightAnchor.constraint(equalTo: cancelButton.heightAnchor),
         ])
     }
+    
+    // MARK: - Actions
     
     @objc func dismissKeyboard() {
         view.endEditing(true)
@@ -168,6 +189,18 @@ final class CreateTrackerViewController: UIViewController {
         }
     }
     
+    // MARK: - Helpers
+    
+    private func setupTableViewDelegateAndDataSource() {
+        tableView.delegate = self
+        tableView.dataSource = self
+    }
+    private func setupGestureRecognizers(){
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+    
     private func isReadyToCreateTracker(for trackerConfig: AddTrackerConfig) -> Bool {
         if trackerConfig.isRegularTracker{
             return !(chosenTrackerSchedule.isEmpty || chosenTrackerName.isEmpty || chosenCategoryName.isEmpty || chosenTrackerEmoji.isEmpty || chosenTrackerColor == .white)
@@ -182,6 +215,8 @@ final class CreateTrackerViewController: UIViewController {
         }
     }
 }
+
+// MARK: - Extensions
 
 extension CreateTrackerViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -303,12 +338,3 @@ extension CreateTrackerViewController: TextFieldCellDelegate {
     }
 }
 
-
-
-protocol CreateTrackerViewControllerDelegate: AnyObject {
-    func didCreateTracker(_ tracker: Tracker, with categoryName: String)
-}
-
-protocol CreateTrackerTypeDismissDelegate: AnyObject {
-    func dismissCreateTrackerTypeViewController()
-}

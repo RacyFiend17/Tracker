@@ -1,5 +1,9 @@
 import UIKit
 
+protocol ScheduleViewControllerDelegate: AnyObject {
+    func didSelectDays(_ days: Set<Weekday>)
+}
+
 final class ScheduleViewController: UIViewController {
     
     weak var delegate: ScheduleViewControllerDelegate?
@@ -116,10 +120,6 @@ extension ScheduleViewController: UITableViewDataSource {
         return cell
         
     }
-}
-
-protocol ScheduleViewControllerDelegate: AnyObject {
-    func didSelectDays(_ days: Set<Weekday>)
 }
 
 extension ScheduleViewController: ScheduleCellDelegate {

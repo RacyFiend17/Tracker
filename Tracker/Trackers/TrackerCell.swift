@@ -1,5 +1,10 @@
 import UIKit
 
+protocol TrackerCellDelegate: AnyObject {
+    func didTapCompleteButton(_ cell: TrackerCell)
+}
+
+
 final class TrackerCell: UICollectionViewCell {
     weak var delegate: TrackerCellDelegate?
     static let reuseIdentifier = "TrackerCell"
@@ -120,6 +125,3 @@ final class TrackerCell: UICollectionViewCell {
     }
 }
 
-protocol TrackerCellDelegate: AnyObject {
-    func didTapCompleteButton(_ cell: TrackerCell)
-}

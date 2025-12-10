@@ -1,5 +1,9 @@
 import UIKit
 
+protocol TextFieldCellDelegate: AnyObject {
+    func textFieldDidEndEditing(with text: String?)
+}
+
 final class TextFieldCell: UITableViewCell {
 
     static let reuseIdentifier = "TextFieldCell"
@@ -84,6 +88,4 @@ final class TextFieldCell: UITableViewCell {
     }
 }
 
-protocol TextFieldCellDelegate: AnyObject {
-    func textFieldDidEndEditing(with text: String?)
-}
+

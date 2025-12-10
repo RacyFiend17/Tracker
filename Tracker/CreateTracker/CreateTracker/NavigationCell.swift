@@ -55,6 +55,27 @@ final class NavigationCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(title: String, subtitle: String?, showSeparator: Bool, roundedCorners: UIRectCorner?) {
+        titleLabel.text = title
+        guard let subtitle else {
+            self.subtitleLabel.text = nil
+            return
+        }
+        subtitleLabel.text = subtitle
+        separatorView.isHidden = !showSeparator
+        
+        if let corners = roundedCorners {
+            containerView.layer.cornerRadius = 16
+            containerView.layer.maskedCorners = CACornerMask(rawValue: corners.rawValue)
+        } else {
+            containerView.layer.cornerRadius = 0
+        }
+    }
+    
+    func addSubtitle(_ subtitle: String) {
+        subtitleLabel.text = subtitle
+    }
+    
     private func setupUI() {
         backgroundColor = .clear
         selectionStyle = .none
@@ -87,26 +108,5 @@ final class NavigationCell: UITableViewCell {
             separatorView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             separatorView.heightAnchor.constraint(equalToConstant: 1)
         ])
-    }
-    
-    func configure(title: String, subtitle: String?, showSeparator: Bool, roundedCorners: UIRectCorner?) {
-        titleLabel.text = title
-        guard let subtitle else {
-            self.subtitleLabel.text = nil
-            return
-        }
-        subtitleLabel.text = subtitle
-        separatorView.isHidden = !showSeparator
-        
-        if let corners = roundedCorners {
-            containerView.layer.cornerRadius = 16
-            containerView.layer.maskedCorners = CACornerMask(rawValue: corners.rawValue)
-        } else {
-            containerView.layer.cornerRadius = 0
-        }
-    }
-    
-    func addSubtitle(_ subtitle: String) {
-        subtitleLabel.text = subtitle
     }
 }

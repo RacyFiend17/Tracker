@@ -1,5 +1,9 @@
 import UIKit
 
+protocol ScheduleCellDelegate: AnyObject {
+    func switchButtonChangedValue(_ cell: ScheduleCell, isOn: Bool)
+}
+
 final class ScheduleCell: UITableViewCell {
     
     static let reuseIdentifier = "ScheduleCell"
@@ -89,6 +93,3 @@ final class ScheduleCell: UITableViewCell {
     }
 }
 
-protocol ScheduleCellDelegate: AnyObject {
-    func switchButtonChangedValue(_ cell: ScheduleCell, isOn: Bool)
-}
