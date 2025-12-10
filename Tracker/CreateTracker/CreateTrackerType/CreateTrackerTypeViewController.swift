@@ -3,6 +3,7 @@ import UIKit
 final class CreateTrackerTypeViewController: UIViewController {
     
     weak var delegate: CreateTrackerViewControllerDelegate?
+    var dateOfTrackerCreation = Date()
     
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
@@ -79,12 +80,22 @@ final class CreateTrackerTypeViewController: UIViewController {
     @objc private func habitButtonTapped() {
         let vc = CreateTrackerViewController(trackerConfig: HabitConfig())
         vc.delegate = delegate
+        vc.parentTypeControllerDelegate = self
+        vc.dateOfTrackerCreation = dateOfTrackerCreation
         self.present(vc, animated: true, completion: nil)
     }
     
     @objc private func irregularButtonTapped() {
         let vc = CreateTrackerViewController(trackerConfig: IrregularConfig())
         vc.delegate = delegate
+        vc.parentTypeControllerDelegate = self
+        vc.dateOfTrackerCreation = dateOfTrackerCreation
         self.present(vc, animated: true, completion: nil)
+    }
+}
+
+extension CreateTrackerTypeViewController: CreateTrackerTypeDismissDelegate {
+    func dismissCreateTrackerTypeViewController() {
+        dismiss(animated: true)
     }
 }

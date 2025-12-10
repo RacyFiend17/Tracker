@@ -230,6 +230,7 @@ final class TrackersViewController: UIViewController {
     @objc private func addButtonDidTap() {
         let vc = CreateTrackerTypeViewController()
         vc.delegate = self
+        vc.dateOfTrackerCreation = datePicker.date
         self.present(vc, animated: true, completion: nil)
     }
     
@@ -279,7 +280,6 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         return cell
     }
-    
 }
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
@@ -354,8 +354,9 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
             
             categories = newCategories
             
-            showErrorLabelAndImageViewOrCollectionView()
+            
         }
+        showErrorLabelAndImageViewOrCollectionView()
     }
 }
 

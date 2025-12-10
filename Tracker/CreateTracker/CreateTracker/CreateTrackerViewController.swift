@@ -3,6 +3,7 @@ import UIKit
 final class CreateTrackerViewController: UIViewController {
     
     weak var delegate: CreateTrackerViewControllerDelegate?
+    weak var parentTypeControllerDelegate: CreateTrackerTypeDismissDelegate?
     
     private var trackerConfig: AddTrackerConfig
     private var chosenTrackerSchedule: [Weekday] = []
@@ -10,6 +11,7 @@ final class CreateTrackerViewController: UIViewController {
     private var chosenCategoryName: String = "Че-то там"
     private var chosenTrackerEmoji: String = "🥵"
     private var chosenTrackerColor: UIColor = UIColor(resource: .ypGreen)
+    var dateOfTrackerCreation = Date()
     
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
@@ -56,6 +58,7 @@ final class CreateTrackerViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.titleLabel?.textAlignment = .center
         button.setTitleColor(.white, for: .normal)
+        button.isEnabled = false
         button.addTarget(self, action: #selector(createButtonDidTap), for: .touchUpInside)
         return button
     } ()
@@ -130,7 +133,6 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     @objc private func createButtonDidTap() {
-        print(chosenTrackerName)
         if chosenTrackerName.isEmpty || chosenCategoryName.isEmpty || chosenTrackerEmoji.isEmpty || chosenTrackerColor == .white { return }
         else {
             if trackerConfig.isRegularTracker {
@@ -142,10 +144,11 @@ final class CreateTrackerViewController: UIViewController {
                     emoji: chosenTrackerEmoji,
                     schedule: chosenTrackerSchedule,
                     trackerType: TrackerType.habit,
-                    dateCreated: Date()
+                    dateCreated: dateOfTrackerCreation
                     )
-                delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
                 dismiss(animated: true)
+                parentTypeControllerDelegate?.dismissCreateTrackerTypeViewController()
+                delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
             } else {
                 let newTracker = Tracker(
                     id: UUID(),
@@ -154,21 +157,30 @@ final class CreateTrackerViewController: UIViewController {
                     emoji: chosenTrackerEmoji,
                     schedule: Weekday.allCases,
                     trackerType: TrackerType.habit,
-                    dateCreated: Date()
+                    dateCreated: dateOfTrackerCreation
                     )
                 
                 dismiss(animated: true)
-                
+                parentTypeControllerDelegate?.dismissCreateTrackerTypeViewController()
                 delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
             
             }
         }
     }
-}
-
-
-protocol CreateTrackerViewControllerDelegate: AnyObject {
-    func didCreateTracker(_ tracker: Tracker, with categoryName: String)
+    
+    private func isReadyToCreateTracker(for trackerConfig: AddTrackerConfig) -> Bool {
+        if trackerConfig.isRegularTracker{
+            return !(chosenTrackerSchedule.isEmpty || chosenTrackerName.isEmpty || chosenCategoryName.isEmpty || chosenTrackerEmoji.isEmpty || chosenTrackerColor == .white)
+        }
+        return !(chosenTrackerName.isEmpty || chosenCategoryName.isEmpty || chosenTrackerEmoji.isEmpty || chosenTrackerColor == .white)
+    }
+    
+    private func setCreateButtonActive(_ isActive: Bool) {
+        if isActive {
+            createButton.isEnabled = true
+            createButton.backgroundColor = UIColor(resource: .ypBlack)
+        }
+    }
 }
 
 extension CreateTrackerViewController: UITableViewDataSource {
@@ -274,6 +286,8 @@ extension CreateTrackerViewController: ScheduleViewControllerDelegate {
             
             let indexPath = IndexPath(row: 1, section: 1)
             tableView.reloadRows(at: [indexPath], with: .none)
+            
+            setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
         }
     }
 }
@@ -283,7 +297,18 @@ extension CreateTrackerViewController: TextFieldCellDelegate {
         guard let text = text else { return }
         if !text.isEmpty {
             chosenTrackerName = text
+            setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
             return
         }
     }
+}
+
+
+
+protocol CreateTrackerViewControllerDelegate: AnyObject {
+    func didCreateTracker(_ tracker: Tracker, with categoryName: String)
+}
+
+protocol CreateTrackerTypeDismissDelegate: AnyObject {
+    func dismissCreateTrackerTypeViewController()
 }
