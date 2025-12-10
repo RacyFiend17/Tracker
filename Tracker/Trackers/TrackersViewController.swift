@@ -10,7 +10,7 @@ final class TrackersViewController: UIViewController {
             name: "Выпить воду",
             color: .systemBlue,
             emoji: "💧",
-            schedule: [.monday],
+            schedule: [.tuesday, .thursday],
             trackerType: .habit, dateCreated: calendar.date(from: DateComponents(year: 2025, month: 3, day: 1))!
         )
         
@@ -28,7 +28,7 @@ final class TrackersViewController: UIViewController {
             name: "Позвонить маме",
             color: .systemGreen,
             emoji: "📞",
-            schedule: [.monday],
+            schedule: [.wednesday, .thursday],
             trackerType: .habit, dateCreated: calendar.date(from: DateComponents(year: 2025, month: 1, day: 1))!
         )
         

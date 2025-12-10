@@ -6,7 +6,7 @@ final class NavigationCell: UITableViewCell {
     
     private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(resource: .ypGray).withAlphaComponent(0.3)
+        view.backgroundColor = UIColor(resource: .ypLightGray).withAlphaComponent(0.3)
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         return view
