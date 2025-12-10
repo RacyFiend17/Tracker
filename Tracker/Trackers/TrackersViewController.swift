@@ -1,6 +1,7 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
+    
     let calendar = Calendar.current
     private let id1 = UUID(), id2 = UUID(), id3 = UUID()
     private lazy var categories: [TrackerCategory] = {
@@ -32,8 +33,8 @@ final class TrackersViewController: UIViewController {
         )
         
         let category1 = TrackerCategory(
-            trackers: [tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2, tracker1, tracker2],
-            title: "Здоровье"
+            trackers: [tracker1, tracker2],
+            title: "Домашний уют"
         )
         
         let category2 = TrackerCategory(
@@ -85,12 +86,16 @@ final class TrackersViewController: UIViewController {
         return titleLabel
     } ()
     
-    private lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.placeholder = "Поиск"
-        searchBar.searchBarStyle = .minimal
-        return searchBar
-    } ()
+    private lazy var searchTextField: UISearchTextField = {
+        let searchTextField = UISearchTextField()
+        searchTextField.placeholder = "Поиск"
+        searchTextField.backgroundColor = UIColor(resource: .lightGrayForSearchField).withAlphaComponent(0.12)
+        searchTextField.layer.cornerRadius = 10
+        searchTextField.layer.masksToBounds = true
+        searchTextField.borderStyle = .none
+        searchTextField.clearButtonMode = .whileEditing
+        return searchTextField
+    }()
     
     private lazy var datePicker = {
         let datePicker = UIDatePicker()
@@ -142,14 +147,13 @@ final class TrackersViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        view.addSubviews([addButton, titleLabel, searchBar, datePicker, dateLabel, collectionView, errorLabel, errorImageView])
+        view.addSubviews([addButton, titleLabel, searchTextField, datePicker, dateLabel, collectionView, errorLabel, errorImageView])
         view.translatesAutoResizingMaskFalseTo(view.subviews)
         
         setupConstraints()
     }
 
-
-@objc func dismissKeyboard() {
+    @objc func dismissKeyboard() {
     view.endEditing(true)
 }
     
@@ -163,10 +167,10 @@ final class TrackersViewController: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: addButton.bottomAnchor, constant: 1),
             titleLabel.leadingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: 10),
             
-            searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 7),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            searchBar.heightAnchor.constraint(equalToConstant: 59),
+            searchTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 7),
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            searchTextField.heightAnchor.constraint(equalToConstant: 36),
             
             datePicker.centerYAnchor.constraint(equalTo: addButton.centerYAnchor),
             datePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -178,7 +182,7 @@ final class TrackersViewController: UIViewController {
             dateLabel.heightAnchor.constraint(equalToConstant: 34),
             dateLabel.widthAnchor.constraint(equalToConstant: 77),
             
-            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 0),
+            collectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -225,6 +229,7 @@ final class TrackersViewController: UIViewController {
     
     @objc private func addButtonDidTap() {
         let vc = CreateTrackerTypeViewController()
+        vc.delegate = self
         self.present(vc, animated: true, completion: nil)
     }
     
@@ -295,12 +300,8 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: 46)
+        return CGSize(width: collectionView.frame.width, height: 54)
     }
-}
-
-extension TrackersViewController: UICollectionViewDelegate {
-    
 }
 
 extension TrackersViewController: TrackerCellDelegate {
@@ -334,9 +335,27 @@ extension TrackersViewController: TrackerCellDelegate {
 }
 
 extension TrackersViewController: CreateTrackerViewControllerDelegate {
-    func didCreateTracker(_ tracker: Tracker) {
-        //TODO:
-        collectionView.reloadData()
+    func didCreateTracker(_ tracker: Tracker, with categoryName: String) {
+        if categories.contains(where: { $0.title == categoryName }) {
+            guard let firstIndex = categories.firstIndex(where: { $0.title == categoryName }) else { return }
+        
+            let trackersInCategory = categories[firstIndex].trackers
+            let titleOfCategory = categories[firstIndex].title
+            
+            let newTrackersInCategory = trackersInCategory + [tracker]
+            let newTrackerCategory = TrackerCategory(trackers: newTrackersInCategory, title: titleOfCategory)
+            
+            categories[firstIndex] = newTrackerCategory
+            
+            collectionView.reloadData()
+        } else {
+            var newCategories = categories
+            newCategories.append(TrackerCategory(trackers: [tracker], title: categoryName))
+            
+            categories = newCategories
+            
+            showErrorLabelAndImageViewOrCollectionView()
+        }
     }
 }
 

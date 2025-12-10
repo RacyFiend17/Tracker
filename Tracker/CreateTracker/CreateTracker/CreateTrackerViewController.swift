@@ -2,8 +2,14 @@ import UIKit
 
 final class CreateTrackerViewController: UIViewController {
     
+    weak var delegate: CreateTrackerViewControllerDelegate?
+    
     private var trackerConfig: AddTrackerConfig
-    private var chosenDays: [Weekday] = []
+    private var chosenTrackerSchedule: [Weekday] = []
+    private var chosenTrackerName: String = ""
+    private var chosenCategoryName: String = "Че-то там"
+    private var chosenTrackerEmoji: String = "🥵"
+    private var chosenTrackerColor: UIColor = UIColor(resource: .ypGreen)
     
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
@@ -64,6 +70,7 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         tableView.delegate = self
@@ -115,16 +122,53 @@ final class CreateTrackerViewController: UIViewController {
     
     @objc private func cancelButtonDidTap() {
         dismiss(animated: true)
+        chosenTrackerSchedule = []
+        chosenTrackerName = ""
+        chosenCategoryName = ""
+        chosenTrackerEmoji = ""
+        chosenTrackerColor = .white
     }
     
     @objc private func createButtonDidTap() {
-        
+        print(chosenTrackerName)
+        if chosenTrackerName.isEmpty || chosenCategoryName.isEmpty || chosenTrackerEmoji.isEmpty || chosenTrackerColor == .white { return }
+        else {
+            if trackerConfig.isRegularTracker {
+                if chosenTrackerSchedule.isEmpty { return }
+                let newTracker = Tracker(
+                    id: UUID(),
+                    name: chosenTrackerName,
+                    color: chosenTrackerColor,
+                    emoji: chosenTrackerEmoji,
+                    schedule: chosenTrackerSchedule,
+                    trackerType: TrackerType.habit,
+                    dateCreated: Date()
+                    )
+                delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
+                dismiss(animated: true)
+            } else {
+                let newTracker = Tracker(
+                    id: UUID(),
+                    name: chosenTrackerName,
+                    color: chosenTrackerColor,
+                    emoji: chosenTrackerEmoji,
+                    schedule: Weekday.allCases,
+                    trackerType: TrackerType.habit,
+                    dateCreated: Date()
+                    )
+                
+                dismiss(animated: true)
+                
+                delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
+            
+            }
+        }
     }
 }
 
 
 protocol CreateTrackerViewControllerDelegate: AnyObject {
-    func didCreateTracker(_ tracker: Tracker)
+    func didCreateTracker(_ tracker: Tracker, with categoryName: String)
 }
 
 extension CreateTrackerViewController: UITableViewDataSource {
@@ -147,7 +191,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         switch indexPath.section {
         case 0:
             guard let cell = tableView.dequeueReusableCell(
@@ -157,6 +201,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
                 print("Failed to dequeue TextFieldCell")
                 return UITableViewCell()
             }
+            cell.delegate = self
             return cell
         case 1:
             guard let cell = tableView.dequeueReusableCell(
@@ -174,7 +219,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
             
             let isLast = indexPath.row == titles.count - 1
             let isFirst = indexPath.row == 0
-
+            
             var cornerStyle: UIRectCorner? = nil
             if titles.count == 1 {
                 cornerStyle = [.allCorners]
@@ -192,7 +237,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
                            roundedCorners: cornerStyle)
             
             return cell
-
+            
         default:
             return UITableViewCell()
         }
@@ -214,15 +259,14 @@ extension CreateTrackerViewController: ScheduleViewControllerDelegate {
     func didSelectDays(_ days: Set<Weekday>) {
         if !days.isEmpty {
             
-            
             var daysString = ""
             
             switch days.count {
-                case 7:
+            case 7:
                 daysString = "Каждый день"
-                default :
+            default :
                 let sortedDays = days.sorted { $0.rawValue < $1.rawValue }
-                chosenDays = sortedDays
+                chosenTrackerSchedule = sortedDays
                 daysString = sortedDays.map { $0.shortRuName }.joined(separator: ", ")
             }
             
@@ -234,4 +278,12 @@ extension CreateTrackerViewController: ScheduleViewControllerDelegate {
     }
 }
 
-
+extension CreateTrackerViewController: TextFieldCellDelegate {
+    func textFieldDidEndEditing(with text: String?) {
+        guard let text = text else { return }
+        if !text.isEmpty {
+            chosenTrackerName = text
+            return
+        }
+    }
+}

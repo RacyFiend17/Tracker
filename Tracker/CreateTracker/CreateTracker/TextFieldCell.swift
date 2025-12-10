@@ -3,6 +3,7 @@ import UIKit
 final class TextFieldCell: UITableViewCell {
 
     static let reuseIdentifier = "TextFieldCell"
+    weak var delegate: TextFieldCellDelegate?
 
     private let containerView: UIView = {
         let view = UIView()
@@ -18,6 +19,7 @@ final class TextFieldCell: UITableViewCell {
         textField.backgroundColor = .clear
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.addTarget(self, action: #selector(textFieldChangedContent), for: .editingChanged)
+        textField.addTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEnd)
         
         return textField
     }()
@@ -41,6 +43,11 @@ final class TextFieldCell: UITableViewCell {
     
     @objc private func textFieldChangedContent() {
         deleteButton.isHidden = textField.text?.isEmpty == true
+    }
+    
+    @objc private func textFieldDidEndEditing(){
+        
+        delegate?.textFieldDidEndEditing(with: textField.text)
     }
     
     @objc private func deleteTextInTextField () {
@@ -77,4 +84,6 @@ final class TextFieldCell: UITableViewCell {
     }
 }
 
-
+protocol TextFieldCellDelegate: AnyObject {
+    func textFieldDidEndEditing(with text: String?)
+}

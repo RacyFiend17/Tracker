@@ -2,6 +2,8 @@ import UIKit
 
 final class CreateTrackerTypeViewController: UIViewController {
     
+    weak var delegate: CreateTrackerViewControllerDelegate?
+    
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
@@ -76,11 +78,13 @@ final class CreateTrackerTypeViewController: UIViewController {
     
     @objc private func habitButtonTapped() {
         let vc = CreateTrackerViewController(trackerConfig: HabitConfig())
+        vc.delegate = delegate
         self.present(vc, animated: true, completion: nil)
     }
     
     @objc private func irregularButtonTapped() {
         let vc = CreateTrackerViewController(trackerConfig: IrregularConfig())
+        vc.delegate = delegate
         self.present(vc, animated: true, completion: nil)
     }
 }
