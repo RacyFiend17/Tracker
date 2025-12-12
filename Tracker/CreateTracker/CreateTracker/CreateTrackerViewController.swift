@@ -47,7 +47,8 @@ final class CreateTrackerViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.register(TextFieldCell.self, forCellReuseIdentifier: TextFieldCell.reuseIdentifier)
         tableView.register(NavigationCell.self, forCellReuseIdentifier: NavigationCell.reuseIdentifier)
-        tableView.isScrollEnabled = false
+        tableView.register(CollectionOfEmojiCell.self, forCellReuseIdentifier: CollectionOfEmojiCell.reuseIdentifier)
+        tableView.register(EmojiHeaderCell.self, forCellReuseIdentifier: EmojiHeaderCell.reuseIdentifier)
         
         return tableView
     } ()
@@ -195,6 +196,7 @@ final class CreateTrackerViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
     }
+    
     private func setupGestureRecognizers(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
@@ -220,20 +222,18 @@ final class CreateTrackerViewController: UIViewController {
 
 extension CreateTrackerViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 4
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0:
-            return 1
         case 1:
             if trackerConfig.isRegularTracker {
                 return 2
             }
             return 1
         default:
-            return 0
+            return 1
         }
     }
     
@@ -283,6 +283,28 @@ extension CreateTrackerViewController: UITableViewDataSource {
                            showSeparator: showSeparator,
                            roundedCorners: cornerStyle)
             
+            return cell
+        
+        case 2:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: EmojiHeaderCell.reuseIdentifier,
+                for: indexPath
+            ) as? EmojiHeaderCell else {
+                print("Failed to dequeue EmojiHeaderCell")
+                return UITableViewCell()
+            }
+            return cell
+            
+        case 3:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: CollectionOfEmojiCell.reuseIdentifier,
+                for: indexPath
+            ) as? CollectionOfEmojiCell else {
+                print("Failed to dequeue CollectionOfEmojiCell")
+                return UITableViewCell()
+            }
+            cell.delegate = self
+            cell.configure()
             return cell
             
         default:
@@ -338,3 +360,15 @@ extension CreateTrackerViewController: TextFieldCellDelegate {
     }
 }
 
+extension CreateTrackerViewController: CollectionOfEmojiCellDelegate {
+    
+    func didSelectEmoji(_ emoji: String) {
+        chosenTrackerEmoji = emoji
+        setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
+    }
+    
+    func didDeselectEmoji(_ emoji: String) {
+        chosenTrackerEmoji = ""
+        setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
+    }
+}
