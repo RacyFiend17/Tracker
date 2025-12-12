@@ -216,9 +216,10 @@ final class TrackersViewController: UIViewController {
     
     private func filterTrackers(for date: Date, in category: TrackerCategory) -> [Tracker] {
         guard let weekday = date.weekday else { return [] }
-        return category.trackers.filter { $0.schedule.contains(weekday) && $0.dateCreated <= date }
+        
+        return category.trackers.filter { $0.schedule.contains(weekday) && $0.dateCreated.withoutTime <= date.withoutTime }
     }
-    
+
     private func textForDateLabel() -> String {
         return dateFormatter.string(from: datePicker.date)
     }
