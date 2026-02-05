@@ -1,6 +1,6 @@
 import Foundation
 
-enum Weekday: Int, CaseIterable {
+enum Weekday: Int, CaseIterable, Codable {
     case monday = 1, tuesday, wednesday, thursday, friday, saturday, sunday
     
     var ruName: String {
@@ -24,6 +24,18 @@ enum Weekday: Int, CaseIterable {
         case .friday: return "Пт"
         case .saturday: return "Сб"
         case .sunday: return "Вс"
+        }
+    }
+    
+    var coreDataKey: String {
+        switch self {
+        case .monday: return "isMonday"
+        case .tuesday: return "isTuesday"
+        case .wednesday: return "isWednesday"
+        case .thursday: return "isThursday"
+        case .friday: return "isFriday"
+        case .saturday: return "isSaturday"
+        case .sunday: return "isSunday"
         }
     }
 }

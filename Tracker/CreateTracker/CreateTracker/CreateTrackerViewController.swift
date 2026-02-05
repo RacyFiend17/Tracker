@@ -27,7 +27,7 @@ final class CreateTrackerViewController: UIViewController {
     private var chosenCategoryName: String = "Че-то там"
     private var chosenTrackerEmoji: String = ""
     private var chosenTrackerColor: UIColor = .white
-    var dateOfTrackerCreation = Date()
+    var dateOfTrackerCreation = Date().withoutTime
     
     // MARK: - UI Components
     
@@ -168,7 +168,7 @@ final class CreateTrackerViewController: UIViewController {
                     emoji: chosenTrackerEmoji,
                     schedule: chosenTrackerSchedule,
                     trackerType: TrackerType.habit,
-                    dateCreated: dateOfTrackerCreation
+                    dateCreated: Date().withoutTime
                     )
                 dismiss(animated: true)
                 parentTypeControllerDelegate?.dismissCreateTrackerTypeViewController()
@@ -181,7 +181,7 @@ final class CreateTrackerViewController: UIViewController {
                     emoji: chosenTrackerEmoji,
                     schedule: Weekday.allCases,
                     trackerType: TrackerType.habit,
-                    dateCreated: dateOfTrackerCreation
+                    dateCreated: Date().withoutTime
                     )
                 
                 dismiss(animated: true)
