@@ -41,20 +41,27 @@ extension TrackerStore: TrackerStoreProtocol {
         fetchRequestController.fetchedObjects?.count ?? 0
     }
     
-    func numberOfItems(in section: Int) -> Int {
-        let category = fetchRequestController.fetchedObjects?[section]
-        return category?.trackers?.count ?? 0
+    func numberOfItems(in section: Int, on currentDate: Date) -> Int {
+        guard let category = fetchRequestController.fetchedObjects?[section] else {
+                return 0
+            }
+            return filteredTrackers(for: category, on: currentDate).count
     }
     
     func categoryTitle(at section: Int) -> String {
         fetchRequestController.fetchedObjects?[section].title ?? ""
     }
     
-    func tracker(at indexPath: IndexPath) -> Tracker {
+    func tracker(at indexPath: IndexPath, on currentDate: Date) -> Tracker {
+        
+        guard let category = fetchRequestController.fetchedObjects?[indexPath.section] else {
+             fatalError("Category not found")
+         }
+
+        let trackers = filteredTrackers(for: category, on: currentDate)
+        let trackerCD = trackers[indexPath.item]
+        
         guard
-            let category = fetchRequestController.fetchedObjects?[indexPath.section],
-            let trackersOrderedSet = category.trackers,
-            let trackerCD = trackersOrderedSet[indexPath.item] as? TrackerCoreData,
             let id = trackerCD.id,
             let name = trackerCD.name,
             let emoji = trackerCD.emoji,
@@ -128,6 +135,21 @@ extension TrackerStore: TrackerStoreProtocol {
 
         try? fetchRequestController.performFetch()
         onChange?()
+    }
+    
+    private func filteredTrackers(for category: TrackerCategoryCoreData, on currentDate: Date) -> [TrackerCoreData] {
+        guard
+            let trackers = category.trackers,
+            let weekday = currentDate.weekday
+        else { return [] }
+
+        let weekdayKey = weekday.coreDataKey
+
+        return trackers.compactMap { $0 as? TrackerCoreData }
+            .filter { tracker in
+                tracker.value(forKey: weekdayKey) as? Bool == true
+                && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+            }
     }
 }
 

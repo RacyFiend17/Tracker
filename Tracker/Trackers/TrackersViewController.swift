@@ -212,7 +212,7 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        trackerStore.numberOfItems(in: section)
+        trackerStore.numberOfItems(in: section, on: datePicker.date.withoutTime)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -231,7 +231,7 @@ extension TrackersViewController: UICollectionViewDataSource {
             fatalError("There is no TrackerCell")
         }
         
-        let tracker = trackerStore.tracker(at: indexPath)
+        let tracker = trackerStore.tracker(at: indexPath, on: datePicker.date.withoutTime)
         
         let completedDaysCount = trackerRecordStore.completedDaysCount(for: tracker.id)
         let isCompleted = trackerRecordStore.isTrackerCompleted(tracker.id, on: datePicker.date)
@@ -271,7 +271,7 @@ extension TrackersViewController: TrackerCellDelegate {
         
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
         
-        let tracker = trackerStore.tracker(at: indexPath)
+        let tracker = trackerStore.tracker(at: indexPath, on: datePicker.date.withoutTime)
         trackerRecordStore.toggleTracker(tracker.id, on: datePicker.date)
         
         collectionView.reloadData()
