@@ -195,7 +195,7 @@ final class TrackersViewController: UIViewController {
     @objc private func addButtonDidTap() {
         let vc = CreateTrackerTypeViewController()
         vc.delegate = self
-        vc.dateOfTrackerCreation = datePicker.date
+        vc.dateOfTrackerCreation = datePicker.date.withoutTime
         self.present(vc, animated: true, completion: nil)
     }
     

@@ -168,7 +168,7 @@ final class CreateTrackerViewController: UIViewController {
                     emoji: chosenTrackerEmoji,
                     schedule: chosenTrackerSchedule,
                     trackerType: TrackerType.habit,
-                    dateCreated: Date().withoutTime
+                    dateCreated: dateOfTrackerCreation
                     )
                 dismiss(animated: true)
                 parentTypeControllerDelegate?.dismissCreateTrackerTypeViewController()
@@ -181,7 +181,7 @@ final class CreateTrackerViewController: UIViewController {
                     emoji: chosenTrackerEmoji,
                     schedule: Weekday.allCases,
                     trackerType: TrackerType.habit,
-                    dateCreated: Date().withoutTime
+                    dateCreated: dateOfTrackerCreation
                     )
                 
                 dismiss(animated: true)
