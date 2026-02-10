@@ -25,9 +25,9 @@ final class CreateTrackerViewController: UIViewController {
     private var chosenTrackerSchedule: [Weekday] = []
     private var chosenTrackerName: String = ""
     private var chosenCategoryName: String = "Че-то там"
-    private var chosenTrackerEmoji: String = "🥵"
-    private var chosenTrackerColor: UIColor = UIColor(resource: .ypGreen)
-    var dateOfTrackerCreation = Date()
+    private var chosenTrackerEmoji: String = ""
+    private var chosenTrackerColor: UIColor = .white
+    var dateOfTrackerCreation = Date().withoutTime
     
     // MARK: - UI Components
     
@@ -47,7 +47,10 @@ final class CreateTrackerViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.register(TextFieldCell.self, forCellReuseIdentifier: TextFieldCell.reuseIdentifier)
         tableView.register(NavigationCell.self, forCellReuseIdentifier: NavigationCell.reuseIdentifier)
-        tableView.isScrollEnabled = false
+        tableView.register(CollectionOfEmojiCell.self, forCellReuseIdentifier: CollectionOfEmojiCell.reuseIdentifier)
+        tableView.register(EmojiHeaderCell.self, forCellReuseIdentifier: EmojiHeaderCell.reuseIdentifier)
+        tableView.register(CollectionOfColorsCell.self, forCellReuseIdentifier: CollectionOfColorsCell.reuseIdentifier)
+        tableView.register(ColorHeaderCell.self, forCellReuseIdentifier: ColorHeaderCell.reuseIdentifier)
         
         return tableView
     } ()
@@ -195,6 +198,7 @@ final class CreateTrackerViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
     }
+    
     private func setupGestureRecognizers(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
@@ -220,20 +224,18 @@ final class CreateTrackerViewController: UIViewController {
 
 extension CreateTrackerViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 6
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0:
-            return 1
         case 1:
             if trackerConfig.isRegularTracker {
                 return 2
             }
             return 1
         default:
-            return 0
+            return 1
         }
     }
     
@@ -283,6 +285,50 @@ extension CreateTrackerViewController: UITableViewDataSource {
                            showSeparator: showSeparator,
                            roundedCorners: cornerStyle)
             
+            return cell
+        
+        case 2:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: EmojiHeaderCell.reuseIdentifier,
+                for: indexPath
+            ) as? EmojiHeaderCell else {
+                print("Failed to dequeue EmojiHeaderCell")
+                return UITableViewCell()
+            }
+            return cell
+            
+        case 3:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: CollectionOfEmojiCell.reuseIdentifier,
+                for: indexPath
+            ) as? CollectionOfEmojiCell else {
+                print("Failed to dequeue CollectionOfEmojiCell")
+                return UITableViewCell()
+            }
+            cell.delegate = self
+            cell.configure()
+            return cell
+            
+        case 4:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: ColorHeaderCell.reuseIdentifier,
+                for: indexPath
+            ) as? ColorHeaderCell else {
+                print("Failed to dequeue ColorHeaderCell")
+                return UITableViewCell()
+            }
+            return cell
+            
+        case 5:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: CollectionOfColorsCell.reuseIdentifier,
+                for: indexPath
+            ) as? CollectionOfColorsCell else {
+                print("Failed to dequeue CollectionOfColorsCell")
+                return UITableViewCell()
+            }
+            cell.delegate = self
+            cell.configure()
             return cell
             
         default:
@@ -338,3 +384,28 @@ extension CreateTrackerViewController: TextFieldCellDelegate {
     }
 }
 
+extension CreateTrackerViewController: CollectionOfEmojiCellDelegate {
+    
+    func didSelectEmoji(_ emoji: String) {
+        chosenTrackerEmoji = emoji
+        setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
+    }
+    
+    func didDeselectEmoji(_ emoji: String) {
+        chosenTrackerEmoji = ""
+        setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
+    }
+}
+
+extension CreateTrackerViewController: CollectionOfColorsCellDelegate {
+    
+    func didSelectColor(_ color: UIColor) {
+        chosenTrackerColor = color
+        setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
+    }
+    
+    func didDeselectColor(_ color: UIColor) {
+        chosenTrackerColor = .white
+        setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
+    }
+}

@@ -7,4 +7,8 @@ extension Date {
         let corrected = weekdayNumber == 1 ? 7 : weekdayNumber - 1
         return Weekday(rawValue: corrected)
     }
+    var withoutTime: Date {
+        Calendar.current.startOfDay(for: self)
+    }
 }
+
