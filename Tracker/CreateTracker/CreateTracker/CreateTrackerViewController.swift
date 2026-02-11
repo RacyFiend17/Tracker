@@ -15,7 +15,7 @@ protocol CreateTrackerTypeDismissDelegate: AnyObject {
 final class CreateTrackerViewController: UIViewController {
     
     // MARK: - Delegates
-
+    
     weak var delegate: CreateTrackerViewControllerDelegate?
     weak var parentTypeControllerDelegate: CreateTrackerTypeDismissDelegate?
     
@@ -24,7 +24,7 @@ final class CreateTrackerViewController: UIViewController {
     private var trackerConfig: AddTrackerConfig
     private var chosenTrackerSchedule: [Weekday] = []
     private var chosenTrackerName: String = ""
-    private var chosenCategoryName: String = "Че-то там"
+    private var chosenCategoryName: String = ""
     private var chosenTrackerEmoji: String = ""
     private var chosenTrackerColor: UIColor = .white
     var dateOfTrackerCreation = Date().withoutTime
@@ -169,7 +169,7 @@ final class CreateTrackerViewController: UIViewController {
                     schedule: chosenTrackerSchedule,
                     trackerType: TrackerType.habit,
                     dateCreated: dateOfTrackerCreation
-                    )
+                )
                 dismiss(animated: true)
                 parentTypeControllerDelegate?.dismissCreateTrackerTypeViewController()
                 delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
@@ -182,12 +182,12 @@ final class CreateTrackerViewController: UIViewController {
                     schedule: Weekday.allCases,
                     trackerType: TrackerType.habit,
                     dateCreated: dateOfTrackerCreation
-                    )
+                )
                 
                 dismiss(animated: true)
                 parentTypeControllerDelegate?.dismissCreateTrackerTypeViewController()
                 delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
-            
+                
             }
         }
     }
@@ -286,7 +286,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
                            roundedCorners: cornerStyle)
             
             return cell
-        
+            
         case 2:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: EmojiHeaderCell.reuseIdentifier,
@@ -340,11 +340,23 @@ extension CreateTrackerViewController: UITableViewDataSource {
 extension CreateTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         view.endEditing(true)
-        if indexPath.section == 1 && indexPath.row == 1 {
+        guard indexPath.section == 1 else { return }
+        switch indexPath.row {
+        case 0:
+            let store = TrackerCategoryStore()
+            let vm = CategoriesViewModel(store: store)
+            let vc = CategoriesViewController()
+            vc.initialize(viewModel: vm)
+            vc.delegate = self
+            self.present(vc, animated: true)
+        case 1:
             let vc = ScheduleViewController()
             vc.delegate = self
             self.present(vc, animated: true)
+        default :
+            break
         }
+    
     }
 }
 
@@ -370,6 +382,18 @@ extension CreateTrackerViewController: ScheduleViewControllerDelegate {
             
             setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
         }
+    }
+}
+
+extension CreateTrackerViewController: CategoriesViewControllerDelegate {
+    func didSelectCategoryName(_ name: String) {
+        chosenCategoryName = name
+        trackerConfig.navigationCellSubtitles[0] = name
+        
+        let indexPath = IndexPath(row: 0, section: 1)
+        tableView.reloadRows(at: [indexPath], with: .none)
+        
+        setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
     }
 }
 
