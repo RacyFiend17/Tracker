@@ -171,7 +171,6 @@ final class TrackersViewController: UIViewController {
     }
     
     private func showErrorLabelAndImageViewOrCollectionView() {
-//        if categoriesForDate(date: datePicker.date).isEmpty{
         if trackerStore.numberOfSections() == 0 {
             collectionView.isHidden = true
             errorLabel.isHidden = false

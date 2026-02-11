@@ -50,7 +50,6 @@ final class TextFieldCell: UITableViewCell {
     }
     
     @objc private func textFieldDidEndEditing(){
-        
         delegate?.textFieldDidEndEditing(with: textField.text)
     }
     
