@@ -1,0 +1,42 @@
+"trackers" = "Tracker";
+"creation_of_tracker" = "Tracker-Erstellung";
+"habit" = "Gewohnheit";
+"new_habit" = "Neue Gewohnheit";
+"new_category" = "Neue Kategorie";
+"not_regular_event" = "Unregelmäßiges Ereignis";
+"statistics" = "Statistiken";
+"done" = "Fertig";
+"search" = "Suche";
+"trackers_page.error_title" = "Was wollen wir verfolgen?";
+"input_tracker_name" = "Tracker-Name eingeben";
+"every_day" = "Jeden Tag";
+"input_category_name" = "Kategoriename eingeben";
+"category" = "Kategorie";
+"schedule" = "Zeitplan";
+"emoji" = "Emoji";
+"color" = "Farbe";
+"create" = "Erstellen";
+"cancel" = "Abbrechen";
+"add_category" = "Kategorie hinzufügen";
+"new_not_regular_event" = "Neues unregelmäßiges Ereignis";
+"onboarding.page_tracking.title" = "Verfolge nur, was du willst";
+"onboarding.page_freedom.title" = "Auch wenn es nicht Liter Wasser und Yoga sind";
+"onboarding.cta.start" = "Das ist Technologie!";
+
+// Full weekday names
+"weekday_monday" = "Montag";
+"weekday_tuesday" = "Dienstag";
+"weekday_wednesday" = "Mittwoch";
+"weekday_thursday" = "Donnerstag";
+"weekday_friday" = "Freitag";
+"weekday_saturday" = "Samstag";
+"weekday_sunday" = "Sonntag";
+
+// Short weekday names
+"weekday_short_monday" = "Mo";
+"weekday_short_tuesday" = "Di";
+"weekday_short_wednesday" = "Mi";
+"weekday_short_thursday" = "Do";
+"weekday_short_friday" = "Fr";
+"weekday_short_saturday" = "Sa";
+"weekday_short_sunday" = "So";

@@ -16,7 +16,7 @@ final class OnboardingViewController: UIPageViewController {
     
     private lazy var excitementButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(NSLocalizedString("onboarding.cta.start", comment: ""), for: .normal)
         button.backgroundColor = .ypBlack
         button.clipsToBounds = true
         button.layer.cornerRadius = 16

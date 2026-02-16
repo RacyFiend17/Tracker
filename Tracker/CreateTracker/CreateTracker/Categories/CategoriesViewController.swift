@@ -18,7 +18,7 @@ final class CategoriesViewController: UIViewController {
     private lazy var errorLabel: UILabel = {
         let errorLabel = UILabel()
         errorLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        errorLabel.text = "Что будем отслеживать?"
+        errorLabel.text = "trackers_page.error_title".localized
         return errorLabel
     } ()
     
@@ -27,7 +27,7 @@ final class CategoriesViewController: UIViewController {
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
         titleLabel.textColor = .black
-        titleLabel.text = "Категория"
+        titleLabel.text = "category".localized
         
         return titleLabel
     } ()
@@ -44,7 +44,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle("add_category".localized, for: .normal)
         button.backgroundColor = .ypBlack
         button.clipsToBounds = true
         button.layer.cornerRadius = 16

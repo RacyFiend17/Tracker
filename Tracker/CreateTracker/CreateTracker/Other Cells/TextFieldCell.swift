@@ -19,7 +19,7 @@ final class TextFieldCell: UITableViewCell {
     
     private let textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = "input_tracker_name".localized
         textField.backgroundColor = .clear
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.addTarget(self, action: #selector(textFieldChangedContent), for: .editingChanged)

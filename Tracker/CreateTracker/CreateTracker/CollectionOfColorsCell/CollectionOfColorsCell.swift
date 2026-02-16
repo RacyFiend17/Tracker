@@ -10,9 +10,7 @@ final class CollectionOfColorsCell: UITableViewCell {
     static let reuseIdentifier: String = "CollectionOfColorsCell"
     private let amountOfColors: Int = 18
     weak var delegate: CollectionOfColorsCellDelegate?
-    
-//    private let arrayOfColors: [UIColor] = [UIColor(resource: ._1), UIColor(resource: ._2), UIColor(resource: ._3), UIColor(resource: ._4), UIColor(resource: ._5), UIColor(resource: ._6), UIColor(resource: ._7), UIColor(resource: ._8), UIColor(resource: ._9), UIColor(resource: ._10), UIColor(resource: ._11), UIColor(resource: ._12), UIColor(resource: ._5), UIColor(resource: ._6), UIColor(resource: ._7), UIColor(resource: ._8)]
-    
+ 
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical

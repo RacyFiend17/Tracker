@@ -7,7 +7,7 @@ final class CreateCategoryViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let titleLabel = UILabel()
-        titleLabel.text = "Новая категория"
+        titleLabel.text = "new_category".localized
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
         titleLabel.textColor = .black
@@ -25,7 +25,7 @@ final class CreateCategoryViewController: UIViewController {
     
     private let textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = "input_category_name".localized
         textField.backgroundColor = .clear
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.addTarget(self, action: #selector(textFieldChangedContent), for: .editingChanged)
@@ -44,7 +44,7 @@ final class CreateCategoryViewController: UIViewController {
 
     private let doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("done".localized, for: .normal)
         button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
         button.isEnabled = false

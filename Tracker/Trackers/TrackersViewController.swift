@@ -21,7 +21,7 @@ final class TrackersViewController: UIViewController {
     private lazy var errorLabel: UILabel = {
         let errorLabel = UILabel()
         errorLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        errorLabel.text = "Что будем отслеживать?"
+        errorLabel.text = "trackers_page.error_title".localized
         return errorLabel
     } ()
     
@@ -36,13 +36,13 @@ final class TrackersViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 34, weight: .bold)
-        titleLabel.text = "Трекеры"
+        titleLabel.text = "trackers".localized
         return titleLabel
     } ()
     
     private lazy var searchTextField: UISearchTextField = {
         let searchTextField = UISearchTextField()
-        searchTextField.placeholder = "Поиск"
+        searchTextField.placeholder = "search".localized
         searchTextField.backgroundColor = UIColor(resource: .lightGrayForSearchField).withAlphaComponent(0.12)
         searchTextField.layer.cornerRadius = 10
         searchTextField.layer.masksToBounds = true

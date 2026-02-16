@@ -14,7 +14,7 @@ final class ScheduleViewController: UIViewController {
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
         titleLabel.textColor = .black
-        titleLabel.text = "Расписание"
+        titleLabel.text = "schedule".localized
     
         return titleLabel
     } ()
@@ -31,7 +31,7 @@ final class ScheduleViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("done".localized, for: .normal)
         button.backgroundColor = .ypBlack
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
@@ -109,7 +109,7 @@ extension ScheduleViewController: UITableViewDataSource {
         }
         
         let showSeparator = !isLast
-        let title = Weekday.allCases[indexPath.row].ruName
+        let title = Weekday.allCases[indexPath.row].localizedName
         
         cell.configure(title: title,
                        showSeparator: showSeparator,

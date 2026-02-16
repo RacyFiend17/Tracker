@@ -12,7 +12,7 @@ extension UIView {
     
     @discardableResult func edgesToSuperView() -> Self {
         guard let superview = superview else {
-                fatalError("View не в иерархии!")
+                fatalError("View is not in ierarchy!")
         }
         translatesAutoresizingMaskIntoConstraints = false
         

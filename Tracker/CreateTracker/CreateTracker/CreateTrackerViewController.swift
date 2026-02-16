@@ -57,7 +57,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle("cancel".localized, for: .normal)
         button.backgroundColor = .clear
         button.layer.borderColor = UIColor(resource: .ypRed).cgColor
         button.layer.borderWidth = 1
@@ -72,7 +72,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle("create".localized, for: .normal)
         button.backgroundColor = UIColor(resource: .ypGray)
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
@@ -368,11 +368,11 @@ extension CreateTrackerViewController: ScheduleViewControllerDelegate {
             
             switch days.count {
             case 7:
-                daysString = "Каждый день"
+                daysString = "every_day".localized
             default :
                 let sortedDays = days.sorted { $0.rawValue < $1.rawValue }
                 chosenTrackerSchedule = sortedDays
-                daysString = sortedDays.map { $0.shortRuName }.joined(separator: ", ")
+                daysString = sortedDays.map { $0.localizedShortName }.joined(separator: ", ")
             }
             
             trackerConfig.navigationCellSubtitles[1] = daysString
