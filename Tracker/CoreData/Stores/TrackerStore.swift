@@ -4,6 +4,7 @@ import UIKit
 final class TrackerStore: NSObject {
     private let context: NSManagedObjectContext
     private var currentDate: Date = Date()
+    private var searchQuery: String?
     private let fetchRequestController: NSFetchedResultsController<TrackerCategoryCoreData>
     var onChange: (() -> Void)?
     
@@ -14,18 +15,18 @@ final class TrackerStore: NSObject {
         request.sortDescriptors = [
             NSSortDescriptor(key: "title", ascending: true)
         ]
-
+        
         fetchRequestController = NSFetchedResultsController(
             fetchRequest: request,
             managedObjectContext: context,
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-
+        
         super.init()
-
+        
         fetchRequestController.delegate = self
-
+        
         do {
             try fetchRequestController.performFetch()
         } catch {
@@ -43,9 +44,9 @@ extension TrackerStore: TrackerStoreProtocol {
     
     func numberOfItems(in section: Int, on currentDate: Date) -> Int {
         guard let category = fetchRequestController.fetchedObjects?[section] else {
-                return 0
-            }
-            return filteredTrackers(for: category, on: currentDate).count
+            return 0
+        }
+        return filteredTrackers(for: category, on: currentDate).count
     }
     
     func categoryTitle(at section: Int) -> String {
@@ -55,9 +56,9 @@ extension TrackerStore: TrackerStoreProtocol {
     func tracker(at indexPath: IndexPath, on currentDate: Date) -> Tracker {
         
         guard let category = fetchRequestController.fetchedObjects?[indexPath.section] else {
-             fatalError("Category not found")
-         }
-
+            fatalError("Category not found")
+        }
+        
         let trackers = filteredTrackers(for: category, on: currentDate)
         let trackerCD = trackers[indexPath.item]
         
@@ -106,33 +107,41 @@ extension TrackerStore: TrackerStoreProtocol {
         applyFilter()
     }
     
+    func updateSearchQuery(_ query: String?) {
+        searchQuery = query?.lowercased()
+        applyFilter()
+    }
+    
     private func fetchOrCreateCategory(title: String) -> TrackerCategoryCoreData {
-            let request = TrackerCategoryCoreData.fetchRequest()
-            request.predicate = NSPredicate(format: "title == %@", title)
-
+        let request = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "title == %@", title)
+        
         if let existing = try? context.fetch(request).first {
-                return existing
-            }
-
-            let category = TrackerCategoryCoreData(context: context)
-            category.title = title
-            return category
+            return existing
         }
+        
+        let category = TrackerCategoryCoreData(context: context)
+        category.title = title
+        return category
+    }
     
     private func applyFilter() {
         guard let weekday = currentDate.weekday else { return }
-
+        
         let weekdayKey = weekday.coreDataKey
-
+        
         let weekdayPredicate = NSPredicate(format: "ANY trackers.%K == YES", weekdayKey)
         let datePredicate = NSPredicate(format: "ANY trackers.dateCreated <= %@", currentDate.withoutTime as NSDate)
-
-        fetchRequestController.fetchRequest.predicate =
-            NSCompoundPredicate(andPredicateWithSubpredicates: [
-                weekdayPredicate,
-                datePredicate
-            ])
-
+        
+        var predicates: [NSPredicate] = [weekdayPredicate, datePredicate]
+        
+        if let query = searchQuery, !query.isEmpty {
+            let searchPredicate = NSPredicate(format: "ANY trackers.name CONTAINS[c] %@", query)
+            predicates.append(searchPredicate)
+        }
+        
+        fetchRequestController.fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        
         try? fetchRequestController.performFetch()
         onChange?()
     }
@@ -142,9 +151,9 @@ extension TrackerStore: TrackerStoreProtocol {
             let trackers = category.trackers,
             let weekday = currentDate.weekday
         else { return [] }
-
+        
         let weekdayKey = weekday.coreDataKey
-
+        
         return trackers.compactMap { $0 as? TrackerCoreData }
             .filter { tracker in
                 tracker.value(forKey: weekdayKey) as? Bool == true
@@ -162,10 +171,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
 }
 
 extension TrackerCoreData {
-
+    
     var scheduleArray: [Weekday] {
         var result: [Weekday] = []
-
+        
         if isMonday { result.append(.monday) }
         if isTuesday { result.append(.tuesday) }
         if isWednesday { result.append(.wednesday) }
@@ -173,17 +182,17 @@ extension TrackerCoreData {
         if isFriday { result.append(.friday) }
         if isSaturday { result.append(.saturday) }
         if isSunday { result.append(.sunday) }
-
+        
         return result
     }
     
     func setSchedule(_ schedule: [Weekday]) {
-            isMonday = schedule.contains(.monday)
-            isTuesday = schedule.contains(.tuesday)
-            isWednesday = schedule.contains(.wednesday)
-            isThursday = schedule.contains(.thursday)
-            isFriday = schedule.contains(.friday)
-            isSaturday = schedule.contains(.saturday)
-            isSunday = schedule.contains(.sunday)
-        }
+        isMonday = schedule.contains(.monday)
+        isTuesday = schedule.contains(.tuesday)
+        isWednesday = schedule.contains(.wednesday)
+        isThursday = schedule.contains(.thursday)
+        isFriday = schedule.contains(.friday)
+        isSaturday = schedule.contains(.saturday)
+        isSunday = schedule.contains(.sunday)
+    }
 }

@@ -12,4 +12,5 @@ protocol TrackerStoreProtocol: AnyObject {
     func addTracker(_ tracker: Tracker, categoryTitle: String)
     
     func updateFilter(date: Date)
+    func updateSearchQuery(_ query: String?) 
 }

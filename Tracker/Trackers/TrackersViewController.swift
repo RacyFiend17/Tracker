@@ -48,6 +48,8 @@ final class TrackersViewController: UIViewController {
         searchTextField.layer.masksToBounds = true
         searchTextField.borderStyle = .none
         searchTextField.clearButtonMode = .whileEditing
+        searchTextField.addTarget(self, action: #selector(searchTextDidChange), for: .editingChanged)
+
         return searchTextField
     }()
     
@@ -129,6 +131,9 @@ final class TrackersViewController: UIViewController {
     @objc func dismissKeyboard() {
     view.endEditing(true)
 }
+    @objc private func searchTextDidChange() {
+        trackerStore.updateSearchQuery(searchTextField.text)
+    }
     
     @objc private func setupConstraints () {
         NSLayoutConstraint.activate([
