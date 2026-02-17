@@ -10,14 +10,14 @@ final class CreateTrackerTypeViewController: UIViewController {
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
         titleLabel.textColor = .black
-        titleLabel.text = "Создание трекера"
+        titleLabel.text = "creation_of_tracker".localized
         return titleLabel
     } ()
     
     private lazy var habitButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.setTitle("Привычка", for: .normal)
+        button.setTitle("habit".localized, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.titleLabel?.textAlignment = .center
         button.setTitleColor(.white, for: .normal)
@@ -32,7 +32,7 @@ final class CreateTrackerTypeViewController: UIViewController {
     private lazy var irregularButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.setTitle("Нерегулярное событие", for: .normal)
+        button.setTitle("not_regular_event".localized, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.titleLabel?.textAlignment = .center
         button.setTitleColor(.white, for: .normal)

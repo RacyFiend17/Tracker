@@ -18,6 +18,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
 
         window?.makeKeyAndVisible()
+        
+        print(Bundle.main.bundlePath)
+        print(Locale.preferredLanguages)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

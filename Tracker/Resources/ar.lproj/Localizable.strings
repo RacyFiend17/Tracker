@@ -1,0 +1,42 @@
+"trackers" = "المتعقبات";
+"creation_of_tracker" = "إنشاء المتعقب";
+"habit" = "عادة";
+"new_habit" = "عادة جديدة";
+"new_category" = "فئة جديدة";
+"not_regular_event" = "حدث غير منتظم";
+"statistics" = "الإحصائيات";
+"done" = "تم";
+"search" = "بحث";
+"trackers_page.error_title" = "ماذا نريد تتبعه؟";
+"input_tracker_name" = "أدخل اسم المتعقب";
+"every_day" = "كل يوم";
+"input_category_name" = "أدخل اسم الفئة";
+"category" = "الفئة";
+"schedule" = "الجدول";
+"emoji" = "رمز تعبيري";
+"color" = "لون";
+"create" = "إنشاء";
+"cancel" = "إلغاء";
+"add_category" = "إضافة فئة";
+"new_not_regular_event" = "حدث غير منتظم جديد";
+"onboarding.page_tracking.title" = "تتبع فقط ما تريد";
+"onboarding.page_freedom.title" = "حتى لو لم يكن الأمر مجرد لترات من الماء واليوغا";
+"onboarding.cta.start" = "هذه هي التكنولوجيا!";
+
+// Full weekday names
+"weekday_monday" = "الاثنين";
+"weekday_tuesday" = "الثلاثاء";
+"weekday_wednesday" = "الأربعاء";
+"weekday_thursday" = "الخميس";
+"weekday_friday" = "الجمعة";
+"weekday_saturday" = "السبت";
+"weekday_sunday" = "الأحد";
+
+// Short weekday names
+"weekday_short_monday" = "اثن";
+"weekday_short_tuesday" = "ثلا";
+"weekday_short_wednesday" = "أرب";
+"weekday_short_thursday" = "خمي";
+"weekday_short_friday" = "جم";
+"weekday_short_saturday" = "سبت";
+"weekday_short_sunday" = "أحد";

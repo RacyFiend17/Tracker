@@ -1,0 +1,42 @@
+"trackers" = "Трекеры";
+"creation_of_tracker" = "Создание трекера";
+"habit" = "Привычка";
+"new_habit" = "Новая привычка";
+"new_category" = "Новая категория";
+"not_regular_event" = "Нерегулярное событие";
+"statistics" = "Статистика";
+"done" = "Готово";
+"search" = "Поиск";
+"trackers_page.error_title" = "Что будем отслеживать?";
+"input_tracker_name" = "Введите название трекера";
+"every_day" = "Каждый день";
+"input_category_name" = "Введите название категории";
+"category" = "Категория";
+"schedule" = "Расписание";
+"emoji" = "Эмодзи";
+"color" = "Цвет";
+"create" = "Создать";
+"cancel" = "Отменить";
+"add_category" = "Добавить категорию";
+"new_not_regular_event" = "Новое нерегулярное событие";
+"onboarding.page_tracking.title" = "Отслеживайте только то, что хотите";
+"onboarding.page_freedom.title" = "Даже если это не литры воды и йога";
+"onboarding.cta.start" = "Вот это технологии!";
+
+// Full weekday names
+"weekday_monday" = "Понедельник";
+"weekday_tuesday" = "Вторник";
+"weekday_wednesday" = "Среда";
+"weekday_thursday" = "Четверг";
+"weekday_friday" = "Пятница";
+"weekday_saturday" = "Суббота";
+"weekday_sunday" = "Воскресенье";
+
+// Short weekday names
+"weekday_short_monday" = "Пн";
+"weekday_short_tuesday" = "Вт";
+"weekday_short_wednesday" = "Ср";
+"weekday_short_thursday" = "Чт";
+"weekday_short_friday" = "Пт";
+"weekday_short_saturday" = "Сб";
+"weekday_short_sunday" = "Вс";
