@@ -109,11 +109,7 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     private func daysWord(for count: Int) -> String {
-            switch count % 10 {
-            case 1 where count % 100 != 11: return "\(count) день"
-            case 2...4 where !(12...14).contains(count % 100): return "\(count) дня"
-            default: return "\(count) дней"
-            }
+        String.localizedStringWithFormat(NSLocalizedString("days_count", comment: "Number of days"), count)
         }
     
     func changeDaysCountInDaysLabel(_ completedDaysCount: Int){
