@@ -26,7 +26,7 @@ final class CategoriesViewController: UIViewController {
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .black
+        titleLabel.textColor = .ypBlack
         titleLabel.text = "category".localized
         
         return titleLabel
@@ -50,7 +50,7 @@ final class CategoriesViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.titleLabel?.textAlignment = .center
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(resource: .ypWhite), for: .normal)
         button.addTarget(self, action: #selector(createButtonDidTap), for: .touchUpInside)
         
         return button
@@ -72,7 +72,7 @@ final class CategoriesViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(resource: .ypWhite)
         
         view.addSubviews([titleLabel, tableView, createButton, errorLabel, errorImageView])
         view.translatesAutoResizingMaskFalseTo(view.subviews)

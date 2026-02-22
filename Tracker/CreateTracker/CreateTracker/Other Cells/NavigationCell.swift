@@ -6,7 +6,7 @@ final class NavigationCell: UITableViewCell {
     
     private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(resource: .ypLightGray).withAlphaComponent(0.3)
+        view.backgroundColor = .ypLightGray.withAlphaComponent(0.3)
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         return view
@@ -34,7 +34,7 @@ final class NavigationCell: UITableViewCell {
     
     private let separatorView: UIView = {
         let separator = UIView()
-        separator.backgroundColor = UIColor.black.withAlphaComponent(0.15)
+        separator.backgroundColor = .ypBlack.withAlphaComponent(0.15)
         separator.isHidden = true
         return separator
     }()

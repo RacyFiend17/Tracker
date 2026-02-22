@@ -35,7 +35,7 @@ final class CreateTrackerViewController: UIViewController {
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .black
+        titleLabel.textColor = .ypBlack
         titleLabel.text = trackerConfig.title
         
         return titleLabel
@@ -109,7 +109,7 @@ final class CreateTrackerViewController: UIViewController {
     // MARK: - Setup Methods
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(resource: .ypWhite)
         
         view.addSubviews([titleLabel, tableView, createButton, cancelButton])
         view.translatesAutoResizingMaskFalseTo(view.subviews)
@@ -215,7 +215,10 @@ final class CreateTrackerViewController: UIViewController {
     private func setCreateButtonActive(_ isActive: Bool) {
         if isActive {
             createButton.isEnabled = true
-            createButton.backgroundColor = UIColor(resource: .ypBlack)
+            createButton.backgroundColor = .ypBlack
+            if traitCollection.userInterfaceStyle == .dark {
+                createButton.setTitleColor(.black, for: .normal)
+            }
         }
     }
 }

@@ -1,10 +1,17 @@
 import Testing
+import XCTest
+import SnapshotTesting
+
 @testable import Tracker
 
-struct TrackerTests {
+final class TrackerTests: XCTestCase {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    func testViewController() {
+        let trackerStore = TrackerStore()
+        let trackerRecordStore = TrackerRecordStore()
+        let vc = TrackersViewController(trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
+        
+        assertSnapshot(matching: vc, as: .image)
     }
 
 }

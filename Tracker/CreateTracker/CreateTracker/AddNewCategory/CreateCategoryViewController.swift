@@ -17,7 +17,7 @@ final class CreateCategoryViewController: UIViewController {
     
     private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(resource: .ypLightGray).withAlphaComponent(0.3)
+        view.backgroundColor = .ypLightGray.withAlphaComponent(0.3)
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         return view
@@ -71,7 +71,7 @@ final class CreateCategoryViewController: UIViewController {
     
     //MARK: UI Setup
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(resource: .ypWhite)
         
         view.addSubviews([titleLabel, containerView, textField, deleteButton, doneButton])
         view.translatesAutoResizingMaskFalseTo(view.subviews)

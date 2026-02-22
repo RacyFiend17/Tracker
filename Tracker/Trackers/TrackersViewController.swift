@@ -28,7 +28,7 @@ final class TrackersViewController: UIViewController {
     private lazy var addButton: UIButton = {
         let button = UIButton()
         button.addTarget(self, action: #selector(addButtonDidTap), for: .touchUpInside)
-        button.setImage(UIImage(resource: .addTrackerButton), for: .normal)
+        button.setImage(UIImage(resource: .addTrackerButton).withTintColor(.ypBlack), for: .normal)
         button.contentMode = .scaleAspectFit
         return button
     } ()
@@ -43,7 +43,7 @@ final class TrackersViewController: UIViewController {
     private lazy var searchTextField: UISearchTextField = {
         let searchTextField = UISearchTextField()
         searchTextField.placeholder = "search".localized
-        searchTextField.backgroundColor = UIColor(resource: .lightGrayForSearchField).withAlphaComponent(0.12)
+        searchTextField.backgroundColor = UIColor(resource: .lightGrayForSearchField)
         searchTextField.layer.cornerRadius = 10
         searchTextField.layer.masksToBounds = true
         searchTextField.borderStyle = .none
@@ -70,6 +70,7 @@ final class TrackersViewController: UIViewController {
         dateLabel.layer.masksToBounds = true
         dateLabel.textAlignment = .center
         dateLabel.text = textForDateLabel()
+        dateLabel.textColor = .black
         dateLabel.isUserInteractionEnabled = false
         
         return dateLabel
@@ -120,7 +121,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(resource: .ypWhite)
         
         view.addSubviews([addButton, titleLabel, searchTextField, datePicker, dateLabel, collectionView, errorLabel, errorImageView])
         view.translatesAutoResizingMaskFalseTo(view.subviews)

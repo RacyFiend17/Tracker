@@ -49,7 +49,7 @@ final class TrackerCell: UICollectionViewCell {
         backgroundCardView.backgroundColor = UIColor(resource: .lightGrayForDateLabel)
         
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        daysLabel.textColor = UIColor(resource: .ypBlack)
+        daysLabel.textColor = .ypBlack
         
         completeButton.addTarget(self, action: #selector(completeButtonDidTapped), for: .touchUpInside)
         

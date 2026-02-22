@@ -11,7 +11,7 @@ final class TextFieldCell: UITableViewCell {
 
     private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(resource: .ypLightGray).withAlphaComponent(0.3)
+        view.backgroundColor = .ypLightGray.withAlphaComponent(0.3)
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         return view

@@ -13,7 +13,7 @@ final class ScheduleViewController: UIViewController {
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .black
+        titleLabel.textColor = .ypBlack
         titleLabel.text = "schedule".localized
     
         return titleLabel
@@ -37,7 +37,7 @@ final class ScheduleViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.titleLabel?.textAlignment = .center
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.ypWhite, for: .normal)
         button.addTarget(self, action: #selector(doneButtonDidTap), for: .touchUpInside)
         
         return button
@@ -50,7 +50,7 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         
         view.addSubviews([titleLabel, tableView, doneButton])
         view.translatesAutoResizingMaskFalseTo(view.subviews)
