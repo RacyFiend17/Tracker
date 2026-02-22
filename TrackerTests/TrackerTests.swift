@@ -5,13 +5,24 @@ import SnapshotTesting
 @testable import Tracker
 
 final class TrackerTests: XCTestCase {
-
-    func testViewController() {
+    
+    func testViewControllerWithLightTheme() {
         let trackerStore = TrackerStore()
         let trackerRecordStore = TrackerRecordStore()
         let vc = TrackersViewController(trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
         
-        assertSnapshot(matching: vc, as: .image)
+        vc.overrideUserInterfaceStyle = .light
+        assertSnapshot(matching: vc, as: .image(traits: .init(userInterfaceStyle: .light)))
     }
 
+    
+    func testViewControllerWithDarkTheme() {
+        let trackerStore = TrackerStore()
+        let trackerRecordStore = TrackerRecordStore()
+        let vc = TrackersViewController(trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
+        
+        vc.overrideUserInterfaceStyle = .dark
+        assertSnapshot(matching: vc, as: .image(traits: .init(userInterfaceStyle: .dark)))
+    }
+    
 }
