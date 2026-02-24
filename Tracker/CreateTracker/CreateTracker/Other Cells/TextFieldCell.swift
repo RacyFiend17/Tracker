@@ -45,6 +45,10 @@ final class TextFieldCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(with text: String) {
+        textField.text = text
+    }
+    
     @objc private func textFieldChangedContent() {
         deleteButton.isHidden = textField.text?.isEmpty == true
     }

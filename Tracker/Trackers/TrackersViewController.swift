@@ -197,6 +197,39 @@ final class TrackersViewController: UIViewController {
         return date < Date()
     }
     
+    private func presentEditFlow(for tracker: Tracker){
+        let vc = EditTrackerViewController(editableTracker: tracker, trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
+        vc.delegate = self
+        present(vc, animated: true, completion: nil)
+    }
+    
+    private func presentDeleteFlow(for tracker: Tracker) {
+        
+        let alert = UIAlertController(
+            title: "delete_tracker_alert.title".localized,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let deleteAction = UIAlertAction(
+            title: "delete".localized,
+            style: .destructive
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.trackerStore.deleteTracker(tracker.id)
+        }
+        
+        let cancelAction = UIAlertAction(
+            title: "cancel".localized,
+            style: .cancel
+        )
+        
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
+    }
+    
     @objc private func addButtonDidTap() {
         let vc = CreateTrackerTypeViewController()
         vc.delegate = self
@@ -283,9 +316,53 @@ extension TrackersViewController: TrackerCellDelegate {
     }
 }
 
+extension TrackersViewController: UICollectionViewDelegate {
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        
+        let tracker = trackerStore.tracker(at: indexPath, on: datePicker.date.withoutTime)
+        
+        return UIContextMenuConfiguration(
+            identifier: indexPath as NSCopying,
+            previewProvider: nil
+        ) { [weak self] _ in
+            
+            guard let self else { return nil }
+            
+            let editAction = UIAction(
+                title: "Редактировать",
+            ) { _ in
+                self.presentEditFlow(for: tracker)
+            }
+
+            let deleteAction = UIAction(
+                title: "Удалить",
+                attributes: .destructive
+            ) { _ in
+                self.presentDeleteFlow(for: tracker)
+            }
+            
+            return UIMenu(
+                title: "",
+                children: [editAction, deleteAction]
+            )
+        }
+    }
+}
+
 extension TrackersViewController: CreateTrackerViewControllerDelegate {
     func didCreateTracker(_ tracker: Tracker, with categoryName: String) {
         trackerStore.addTracker(tracker, categoryTitle: categoryName)
+    }
+}
+
+extension TrackersViewController: EditTrackerViewControllerDelegate {
+    func didEditTracker(_ tracker: Tracker, with categoryName: String) {
+        trackerStore.updateTracker(tracker, categoryTitle: categoryName)
     }
 }
 

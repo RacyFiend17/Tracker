@@ -25,6 +25,12 @@ final class ColorCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override var isSelected: Bool {
+        didSet {
+            isSelected ? didSelect() : didDeselect()
+        }
+    }
+    
     // MARK: - Public API
     func configure(with color: UIColor) {
         colorView.backgroundColor = color

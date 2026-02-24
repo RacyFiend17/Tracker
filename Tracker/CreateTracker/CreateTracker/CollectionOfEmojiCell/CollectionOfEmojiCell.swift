@@ -10,6 +10,8 @@ final class CollectionOfEmojiCell: UITableViewCell {
     static let reuseIdentifier: String = "CollectionOfEmojiCell"
     weak var delegate: CollectionOfEmojiCellDelegate?
     
+    private var selectedEmoji: String?
+    
     private let arrayOfEmoji: [String] = ["🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪", "💀", "🤯", "💩", "🤙", "💪", "💫", "🎈", "🎁", "🎊", "🎉", "🐸", "🐣"]
     
     private let collectionView: UICollectionView = {
@@ -32,9 +34,11 @@ final class CollectionOfEmojiCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(){
+    func configure(emoji: String?) {
         collectionView.delegate = self
         collectionView.dataSource = self
+        self.selectedEmoji = emoji
+        collectionView.reloadData()
     }
     
     private func setupUI(){
@@ -71,6 +75,9 @@ extension CollectionOfEmojiCell: UICollectionViewDataSource {
         let indexOfEmoji = indexPath.section * 6 + indexPath.item
         let emoji = arrayOfEmoji[indexOfEmoji]
         cell.configure(with: emoji)
+        if emoji == selectedEmoji {
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+        }
         
         return cell
     }

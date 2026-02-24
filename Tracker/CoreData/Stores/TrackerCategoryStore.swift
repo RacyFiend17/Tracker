@@ -2,13 +2,13 @@ import CoreData
 
 final class TrackerCategoryStore {
     private let context: NSManagedObjectContext
-
+    
     init(context: NSManagedObjectContext = ModelDataStack.shared.context) {
         self.context = context
     }
 }
 
-extension TrackerCategoryStore: TrackerCategoryStoreProtocol {    
+extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
     func fetchCategoriesNames() -> [String] {
         let request = TrackerCategoryCoreData.fetchRequest()
         
@@ -31,12 +31,11 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         }
     }
 
+func addCategory(title: String) {
+    let category = TrackerCategoryCoreData(context: context)
+    category.title = title
     
-    func addCategory(title: String) {
-        let category = TrackerCategoryCoreData(context: context)
-        category.title = title
-        
-        ModelDataStack.shared.saveContext()
-    }
+    ModelDataStack.shared.saveContext()
+}
 }
 

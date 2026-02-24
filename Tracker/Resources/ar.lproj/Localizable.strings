@@ -22,6 +22,12 @@
 "onboarding.page_tracking.title" = "تتبع فقط ما تريد";
 "onboarding.page_freedom.title" = "حتى لو لم يكن الأمر مجرد لترات من الماء واليوغا";
 "onboarding.cta.start" = "هذه هي التكنولوجيا!";
+"edit" = "تعديل";
+"delete" = "حذف";
+"delete_tracker_alert.title" = "هل أنت متأكد أنك تريد حذف المتتبع؟";
+"save" = "حفظ";
+"edit_habit" = "تعديل العادة";
+"edit_not_regular_event" = "تعديل الحدث غير المنتظم";
 
 // Full weekday names
 "weekday_monday" = "الاثنين";

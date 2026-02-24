@@ -22,6 +22,12 @@
 "onboarding.page_tracking.title" = "Verfolge nur, was du willst";
 "onboarding.page_freedom.title" = "Auch wenn es nicht Liter Wasser und Yoga sind";
 "onboarding.cta.start" = "Das ist Technologie!";
+"edit" = "Bearbeiten";
+"delete" = "Löschen";
+"delete_tracker_alert.title" = "Sind Sie sicher, dass Sie den Tracker löschen möchten?";
+"save" = "Speichern";
+"edit_habit" = "Gewohnheit bearbeiten";
+"edit_not_regular_event" = "Unregelmäßiges Ereignis bearbeiten";
 
 // Full weekday names
 "weekday_monday" = "Montag";

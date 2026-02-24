@@ -22,6 +22,12 @@
 "onboarding.page_tracking.title" = "Отслеживайте только то, что хотите";
 "onboarding.page_freedom.title" = "Даже если это не литры воды и йога";
 "onboarding.cta.start" = "Вот это технологии!";
+"edit" = "Редактировать";
+"delete" = "Удалить";
+"delete_tracker_alert.title" = "Уверены, что хотите удалить трекер?";
+"save" = "Сохранить";
+"edit_habit" = "Редактирование привычки";
+"edit_not_regular_event" = "Редактирование нерегулярного события";
 
 // Full weekday names
 "weekday_monday" = "Понедельник";

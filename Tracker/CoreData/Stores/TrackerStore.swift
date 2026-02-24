@@ -53,6 +53,28 @@ extension TrackerStore: TrackerStoreProtocol {
         fetchRequestController.fetchedObjects?[section].title ?? ""
     }
     
+    func categoryTitle(for tracker: Tracker) -> String {
+        
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        request.fetchLimit = 1
+        
+        do {
+            guard let tracker = try context.fetch(request).first else {
+                fatalError("Tracker with id \(tracker.id) not found")
+            }
+            
+            guard let title = tracker.category?.title else {
+                fatalError("Tracker has no category")
+            }
+            
+            return title
+            
+        } catch {
+            fatalError("Failed to fetch category title: \(error)")
+        }
+    }
+    
     func tracker(at indexPath: IndexPath, on currentDate: Date) -> Tracker {
         
         guard let category = fetchRequestController.fetchedObjects?[indexPath.section] else {
@@ -100,6 +122,63 @@ extension TrackerStore: TrackerStoreProtocol {
         trackerCD.category = category
         
         ModelDataStack.shared.saveContext()
+    }
+    
+    func updateTracker(_ tracker: Tracker, categoryTitle: String) {
+        
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        request.fetchLimit = 1
+        
+        do {
+            guard let trackerCD = try context.fetch(request).first else {
+                assertionFailure("Tracker not found for update")
+                return
+            }
+            
+            let oldCategory = trackerCD.category
+            
+            trackerCD.name = tracker.name
+            trackerCD.emoji = tracker.emoji
+            trackerCD.color = tracker.color
+            trackerCD.setSchedule(tracker.schedule)
+            trackerCD.trackerTypeRaw = tracker.trackerType.rawValue
+            trackerCD.dateCreated = tracker.dateCreated
+            
+            if oldCategory?.title != categoryTitle {
+                let newCategory = fetchOrCreateCategory(title: categoryTitle)
+                trackerCD.category = newCategory
+            }
+            
+            checkForEmptyCategories(for: oldCategory)
+            ModelDataStack.shared.saveContext()
+            
+            applyFilter()
+            
+        } catch {
+            assertionFailure("Failed to update tracker: \(error)")
+        }
+    }
+    
+    func deleteTracker(_ id: UUID) {
+        
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        request.fetchLimit = 1
+        
+        do {
+            if let tracker = try context.fetch(request).first {
+                
+                context.delete(tracker)
+                let category = tracker.category
+                
+                checkForEmptyCategories(for: category)
+                
+                ModelDataStack.shared.saveContext()
+            }
+        } catch {
+            assertionFailure("Failed to delete tracker: \(error)")
+        }
     }
     
     func updateFilter(date: Date) {
@@ -159,6 +238,14 @@ extension TrackerStore: TrackerStoreProtocol {
                 tracker.value(forKey: weekdayKey) as? Bool == true
                 && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
             }
+    }
+    
+    private func checkForEmptyCategories(for category: TrackerCategoryCoreData?) {
+        if let category,
+           let trackers = category.trackers,
+           trackers.count == 0 {
+            context.delete(category)
+        }
     }
 }
 

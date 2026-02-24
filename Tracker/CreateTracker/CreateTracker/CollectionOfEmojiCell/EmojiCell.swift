@@ -22,6 +22,12 @@ final class EmojiCell: UICollectionViewCell {
         setupUI()
     }
     
+    override var isSelected: Bool {
+        didSet {
+            isSelected ? didSelect() : didDeselect()
+        }
+    }
+    
     func configure(with text: String) {
         emojiLabel.text = text
     }

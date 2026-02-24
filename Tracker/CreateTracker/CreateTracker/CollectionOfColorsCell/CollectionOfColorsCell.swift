@@ -10,6 +10,8 @@ final class CollectionOfColorsCell: UITableViewCell {
     static let reuseIdentifier: String = "CollectionOfColorsCell"
     private let amountOfColors: Int = 18
     weak var delegate: CollectionOfColorsCellDelegate?
+    
+    private var selectedColor: UIColor?
  
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -31,9 +33,11 @@ final class CollectionOfColorsCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(){
+    func configure(color: UIColor){
         collectionView.delegate = self
         collectionView.dataSource = self
+        self.selectedColor = color
+        collectionView.reloadData()
     }
     
     private func setupUI(){
@@ -72,6 +76,9 @@ extension CollectionOfColorsCell: UICollectionViewDataSource {
             return cell
         }
         cell.configure(with: color)
+        if color == selectedColor {
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+        }
         
         return cell
     }
