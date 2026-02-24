@@ -33,6 +33,7 @@
 "trackers_for_today" = "Трекеры на сегодня";
 "done_trackers" = "Завершенные";
 "not_done_trackers" = "Не завершенные";
+"not_found" = "Ничего не найдено";
 
 // Full weekday names
 "weekday_monday" = "Понедельник";

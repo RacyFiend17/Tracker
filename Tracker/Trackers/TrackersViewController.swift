@@ -214,6 +214,11 @@ final class TrackersViewController: UIViewController {
             errorLabel.isHidden = true
             errorImageView.isHidden = true
         }
+        
+        if searchTextField.text?.isEmpty == false {
+            errorLabel.text = "not_found".localized
+            errorImageView.image = UIImage(resource: .notFound)
+        }
     }
     
     private func textForDateLabel() -> String {

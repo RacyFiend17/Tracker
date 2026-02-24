@@ -33,6 +33,7 @@
 "trackers_for_today" = "Trackers for today";
 "done_trackers" = "Completed";
 "not_done_trackers" = "Not completed";
+"not_found" = "Nothing found";
 
 // Full weekday names
 "weekday_monday" = "Monday";

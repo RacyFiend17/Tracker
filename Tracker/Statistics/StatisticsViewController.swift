@@ -4,6 +4,6 @@ final class StatisticsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(resource: .ypWhite)
+        view.backgroundColor = .ypWhite
     }
 }

@@ -33,7 +33,7 @@
 "trackers_for_today" = "متتبعات اليوم";
 "done_trackers" = "مكتملة";
 "not_done_trackers" = "غير مكتملة";
-
+"not_found" = "لم يتم العثور على أي شيء";
 
 // Full weekday names
 "weekday_monday" = "الاثنين";
