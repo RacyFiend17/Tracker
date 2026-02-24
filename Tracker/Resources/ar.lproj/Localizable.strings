@@ -28,6 +28,12 @@
 "save" = "حفظ";
 "edit_habit" = "تعديل العادة";
 "edit_not_regular_event" = "تعديل الحدث غير المنتظم";
+"filters" = "الفلاتر";
+"all_trackers" = "جميع المتتبعات";
+"trackers_for_today" = "متتبعات اليوم";
+"done_trackers" = "مكتملة";
+"not_done_trackers" = "غير مكتملة";
+
 
 // Full weekday names
 "weekday_monday" = "الاثنين";

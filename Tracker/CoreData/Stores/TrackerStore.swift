@@ -5,11 +5,15 @@ final class TrackerStore: NSObject {
     private let context: NSManagedObjectContext
     private var currentDate: Date = Date()
     private var searchQuery: String?
+    private var currentTrackerFilter: TrackerFilter
+    private let trackerRecordStore: TrackerRecordStoreProtocol
     private let fetchRequestController: NSFetchedResultsController<TrackerCategoryCoreData>
     var onChange: (() -> Void)?
     
-    init(context: NSManagedObjectContext = ModelDataStack.shared.context) {
+    init(context: NSManagedObjectContext = ModelDataStack.shared.context, trackerRecordStore: TrackerRecordStoreProtocol) {
         self.context = context
+        self.currentTrackerFilter = AppSettings.selectedFilter
+        self.trackerRecordStore = trackerRecordStore
         
         let request = TrackerCategoryCoreData.fetchRequest()
         request.sortDescriptors = [
@@ -37,24 +41,40 @@ final class TrackerStore: NSObject {
 
 
 extension TrackerStore: TrackerStoreProtocol {
-    
+
     func numberOfSections() -> Int {
-        fetchRequestController.fetchedObjects?.count ?? 0
+        guard let categories = fetchRequestController.fetchedObjects else {
+            return 0
+        }
+        
+        let filteredCategories = categories.filter { !filteredTrackers(for: $0, on: currentDate).isEmpty }
+
+        return filteredCategories.count
     }
     
     func numberOfItems(in section: Int, on currentDate: Date) -> Int {
-        guard let category = fetchRequestController.fetchedObjects?[section] else {
+        guard let categories = fetchRequestController.fetchedObjects else {
             return 0
         }
+        
+        let filteredCategories = categories.filter { !filteredTrackers(for: $0, on: currentDate).isEmpty }
+        
+        let category = filteredCategories[section]
+         
         return filteredTrackers(for: category, on: currentDate).count
     }
     
     func categoryTitle(at section: Int) -> String {
-        fetchRequestController.fetchedObjects?[section].title ?? ""
+        guard let categories = fetchRequestController.fetchedObjects else {
+            return ""
+        }
+        
+        let filteredCategories = categories.filter { !filteredTrackers(for: $0, on: currentDate).isEmpty }
+        return filteredCategories[section].title ?? ""
+        
     }
     
     func categoryTitle(for tracker: Tracker) -> String {
-        
         let request = TrackerCoreData.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
         request.fetchLimit = 1
@@ -76,8 +96,7 @@ extension TrackerStore: TrackerStoreProtocol {
     }
     
     func tracker(at indexPath: IndexPath, on currentDate: Date) -> Tracker {
-        
-        guard let category = fetchRequestController.fetchedObjects?[indexPath.section] else {
+        guard let category = fetchRequestController.fetchedObjects?.filter({ !filteredTrackers(for: $0, on: currentDate).isEmpty})[indexPath.section] else {
             fatalError("Category not found")
         }
         
@@ -186,6 +205,16 @@ extension TrackerStore: TrackerStoreProtocol {
         applyFilter()
     }
     
+    func setFilter(_ filter: TrackerFilter) {
+        currentTrackerFilter = filter
+        
+        if filter == .today {
+            currentDate = Date().withoutTime
+        }
+        
+        applyFilter()
+    }
+    
     func updateSearchQuery(_ query: String?) {
         searchQuery = query?.lowercased()
         applyFilter()
@@ -208,12 +237,18 @@ extension TrackerStore: TrackerStoreProtocol {
         guard let weekday = currentDate.weekday else { return }
         
         let weekdayKey = weekday.coreDataKey
+
+        var predicates: [NSPredicate] = []
         
-        let weekdayPredicate = NSPredicate(format: "ANY trackers.%K == YES", weekdayKey)
-        let datePredicate = NSPredicate(format: "ANY trackers.dateCreated <= %@", currentDate.withoutTime as NSDate)
-        
-        var predicates: [NSPredicate] = [weekdayPredicate, datePredicate]
-        
+        switch currentTrackerFilter {
+        case .all:
+            break
+        case .today, .completed, .uncompleted:
+            let weekdayPredicate = NSPredicate(format: "ANY trackers.%K == YES", weekdayKey)
+            let datePredicate = NSPredicate(format: "ANY trackers.dateCreated <= %@", currentDate.withoutTime as NSDate)
+            predicates = [weekdayPredicate, datePredicate]
+        }
+
         if let query = searchQuery, !query.isEmpty {
             let searchPredicate = NSPredicate(format: "ANY trackers.name CONTAINS[c] %@", query)
             predicates.append(searchPredicate)
@@ -231,13 +266,42 @@ extension TrackerStore: TrackerStoreProtocol {
             let weekday = currentDate.weekday
         else { return [] }
         
-        let weekdayKey = weekday.coreDataKey
+        var filteredTrackers = trackers.compactMap { $0 as? TrackerCoreData }
         
-        return trackers.compactMap { $0 as? TrackerCoreData }
-            .filter { tracker in
-                tracker.value(forKey: weekdayKey) as? Bool == true
-                && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+        if let query = searchQuery, !query.isEmpty {
+            filteredTrackers = filteredTrackers.filter {
+                ($0.name?.lowercased().contains(query) ?? false)
             }
+        }
+        
+        switch currentTrackerFilter {
+        case .all:
+            return filteredTrackers
+        case .today:
+            let weekdayKey = weekday.coreDataKey
+            
+            return filteredTrackers.filter { tracker in
+                    tracker.value(forKey: weekdayKey) as? Bool == true
+                    && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+                }
+        case .completed:
+            let weekdayKey = weekday.coreDataKey
+            
+            return filteredTrackers.filter { tracker in
+                    tracker.value(forKey: weekdayKey) as? Bool == true
+                    && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+                    && trackerRecordStore.isTrackerCompleted(tracker.id ?? UUID(), on: currentDate.withoutTime)
+                }
+        case .uncompleted:
+            let weekdayKey = weekday.coreDataKey
+            
+            return filteredTrackers.filter { tracker in
+                    tracker.value(forKey: weekdayKey) as? Bool == true
+                    && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+                    && !trackerRecordStore.isTrackerCompleted(tracker.id ?? UUID(), on: currentDate.withoutTime)
+                
+                }
+        }
     }
     
     private func checkForEmptyCategories(for category: TrackerCategoryCoreData?) {

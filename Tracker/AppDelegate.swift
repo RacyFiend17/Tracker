@@ -10,7 +10,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         if let configuration = AppMetricaConfiguration(apiKey: "1fe5c8f6-95ad-4cb5-9783-e1aecd39f445") {
             AppMetrica.activate(with: configuration)
         }
-
+        AppSettings.selectedFilter = .all
         return true
         }
     

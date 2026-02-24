@@ -13,8 +13,8 @@ final class TabBarViewController: UITabBarController {
     
     private func setupTabBarControllers() {
         let statisticsViewController = StatisticsViewController()
-        let trackerStore = TrackerStore()
         let trackerRecordStore = TrackerRecordStore()
+        let trackerStore = TrackerStore(trackerRecordStore: trackerRecordStore)
         let trackersViewController = TrackersViewController(trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
         
         trackersViewController.tabBarItem = UITabBarItem(title: "trackers".localized, image: UIImage(resource: .trackersTabBarLogo), tag: 0)

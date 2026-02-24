@@ -28,6 +28,12 @@
 "save" = "Speichern";
 "edit_habit" = "Gewohnheit bearbeiten";
 "edit_not_regular_event" = "Unregelmäßiges Ereignis bearbeiten";
+"filters" = "Filter";
+"all_trackers" = "Alle tracker";
+"trackers_for_today" = "Tracker für heute";
+"done_trackers" = "Abgeschlossen";
+"not_done_trackers" = "Nicht abgeschlossen";
+
 
 // Full weekday names
 "weekday_monday" = "Montag";

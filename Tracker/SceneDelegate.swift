@@ -19,6 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window?.makeKeyAndVisible()
         
+        AppSettings.selectedFilter = .all
+        
         print(Bundle.main.bundlePath)
         print(Locale.preferredLanguages)
     }

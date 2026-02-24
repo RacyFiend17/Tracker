@@ -49,7 +49,7 @@ final class TrackersViewController: UIViewController {
         searchTextField.borderStyle = .none
         searchTextField.clearButtonMode = .whileEditing
         searchTextField.addTarget(self, action: #selector(searchTextDidChange), for: .editingChanged)
-
+        
         return searchTextField
     }()
     
@@ -90,6 +90,19 @@ final class TrackersViewController: UIViewController {
         return collectionView
     } ()
     
+    private lazy var filtersButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("filters".localized, for: .normal)
+        button.backgroundColor = .ypBlue
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 16
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        button.titleLabel?.textAlignment = .center
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(filtersButtonDidTap), for: .touchUpInside)
+        return button
+    }()
+    
     init(trackerStore: TrackerStoreProtocol, trackerRecordStore: TrackerRecordStoreProtocol) {
         self.trackerStore = trackerStore
         self.trackerRecordStore = trackerRecordStore
@@ -123,17 +136,24 @@ final class TrackersViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = UIColor(resource: .ypWhite)
         
-        view.addSubviews([addButton, titleLabel, searchTextField, datePicker, dateLabel, collectionView, errorLabel, errorImageView])
+        view.addSubviews([addButton, titleLabel, searchTextField, datePicker, dateLabel, collectionView, errorLabel, errorImageView, filtersButton])
         view.translatesAutoResizingMaskFalseTo(view.subviews)
         
         setupConstraints()
     }
-
+    
     @objc func dismissKeyboard() {
-    view.endEditing(true)
-}
+        view.endEditing(true)
+    }
+    
     @objc private func searchTextDidChange() {
         trackerStore.updateSearchQuery(searchTextField.text)
+    }
+    
+    @objc private func filtersButtonDidTap(){
+        let vc = FiltersViewController(trackerStore: trackerStore)
+        vc.delegate = self
+        present(vc, animated: true)
     }
     
     @objc private func setupConstraints () {
@@ -172,23 +192,30 @@ final class TrackersViewController: UIViewController {
             errorImageView.widthAnchor.constraint(equalToConstant: 80),
             
             errorLabel.topAnchor.constraint(equalTo: errorImageView.bottomAnchor, constant: 8),
-            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            filtersButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
+            filtersButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filtersButton.heightAnchor.constraint(equalToConstant: 50),
+            filtersButton.widthAnchor.constraint(equalToConstant: 114)
         ])
     }
     
     private func showErrorLabelAndImageViewOrCollectionView() {
         if trackerStore.numberOfSections() == 0 {
             collectionView.isHidden = true
+            filtersButton.isHidden = true
             errorLabel.isHidden = false
             errorImageView.isHidden = false
         } else {
             collectionView.reloadData()
             collectionView.isHidden = false
+            filtersButton.isHidden = false
             errorLabel.isHidden = true
             errorImageView.isHidden = true
         }
     }
-
+    
     private func textForDateLabel() -> String {
         return dateFormatter.string(from: datePicker.date)
     }
@@ -238,6 +265,10 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func datePickerValueChanged() {
+        if datePicker.date != Date().withoutTime && AppSettings.selectedFilter == .today {
+            AppSettings.selectedFilter = .all
+            trackerStore.setFilter(.all)
+        }
         dateLabel.text = textForDateLabel()
         trackerStore.updateFilter(date: datePicker.date)
     }
@@ -246,6 +277,9 @@ final class TrackersViewController: UIViewController {
 extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
+        if trackerStore.numberOfSections() == 0 {
+            showErrorLabelAndImageViewOrCollectionView()
+        }
         return trackerStore.numberOfSections()
     }
     
@@ -338,7 +372,7 @@ extension TrackersViewController: UICollectionViewDelegate {
             ) { _ in
                 self.presentEditFlow(for: tracker)
             }
-
+            
             let deleteAction = UIAction(
                 title: "Удалить",
                 attributes: .destructive
@@ -366,3 +400,18 @@ extension TrackersViewController: EditTrackerViewControllerDelegate {
     }
 }
 
+extension TrackersViewController: FiltersViewControllerDelegate {
+    func filterDidSet(_ filter: TrackerFilter) {
+        
+        if filter == .today {
+            let today = Date().withoutTime
+            
+            datePicker.setDate(today, animated: true)
+            dateLabel.text = textForDateLabel()
+            
+            trackerStore.updateFilter(date: today)
+        }
+        
+        trackerStore.setFilter(filter)
+    }
+}

@@ -28,6 +28,11 @@
 "save" = "Сохранить";
 "edit_habit" = "Редактирование привычки";
 "edit_not_regular_event" = "Редактирование нерегулярного события";
+"filters" = "Фильтры";
+"all_trackers" = "Все трекеры";
+"trackers_for_today" = "Трекеры на сегодня";
+"done_trackers" = "Завершенные";
+"not_done_trackers" = "Не завершенные";
 
 // Full weekday names
 "weekday_monday" = "Понедельник";

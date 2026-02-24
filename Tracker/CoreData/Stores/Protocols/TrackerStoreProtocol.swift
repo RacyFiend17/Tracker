@@ -15,5 +15,6 @@ protocol TrackerStoreProtocol: AnyObject {
     func deleteTracker(_ id: UUID)
     
     func updateFilter(date: Date)
-    func updateSearchQuery(_ query: String?) 
+    func setFilter(_ filter: TrackerFilter)
+    func updateSearchQuery(_ query: String?)
 }

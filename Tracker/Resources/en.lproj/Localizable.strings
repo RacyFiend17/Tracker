@@ -18,7 +18,7 @@
 "create" = "Create";
 "cancel" = "Cancel";
 "add_category" = "Add category";
-"new_not_regular_event" = "New Not Regular Event";
+"new_not_regular_event" = "New not regular event";
 "onboarding.page_tracking.title" = "Track only what you want";
 "onboarding.page_freedom.title" = "Even if it's not liters of water and yoga";
 "onboarding.cta.start" = "This is technology!";
@@ -26,8 +26,13 @@
 "delete" = "Delete";
 "delete_tracker_alert.title" = "Are you sure you want to delete the tracker?";
 "save" = "Save";
-"edit_habit" = "Edit Habit";
-"edit_not_regular_event" = "Edit Irregular Event";
+"edit_habit" = "Edit habit";
+"edit_not_regular_event" = "Edit irregular event";
+"filters" = "Filters";
+"all_trackers" = "All trackers";
+"trackers_for_today" = "Trackers for today";
+"done_trackers" = "Completed";
+"not_done_trackers" = "Not completed";
 
 // Full weekday names
 "weekday_monday" = "Monday";
