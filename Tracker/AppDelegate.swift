@@ -7,9 +7,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        if let configuration = AppMetricaConfiguration(apiKey: "1fe5c8f6-95ad-4cb5-9783-e1aecd39f445") {
-            AppMetrica.activate(with: configuration)
-        }
+        AnalyticsService.shared.activate()
         AppSettings.selectedFilter = .all
         return true
         }

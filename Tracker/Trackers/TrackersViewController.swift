@@ -133,6 +133,16 @@ final class TrackersViewController: UIViewController {
         view.addGestureRecognizer(tapGesture)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            AnalyticsService.shared.sendEvent(event: "open", screen: "Main")
+        }
+        
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            AnalyticsService.shared.sendEvent(event: "close", screen: "Main")
+        }
+    
     private func setupUI() {
         view.backgroundColor = UIColor(resource: .ypWhite)
         
@@ -154,6 +164,8 @@ final class TrackersViewController: UIViewController {
         let vc = FiltersViewController(trackerStore: trackerStore)
         vc.delegate = self
         present(vc, animated: true)
+        
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "filter")
     }
     
     @objc private func setupConstraints () {
@@ -233,6 +245,8 @@ final class TrackersViewController: UIViewController {
         let vc = EditTrackerViewController(editableTracker: tracker, trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
         vc.delegate = self
         present(vc, animated: true, completion: nil)
+        
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "edit")
     }
     
     private func presentDeleteFlow(for tracker: Tracker) {
@@ -260,6 +274,8 @@ final class TrackersViewController: UIViewController {
         alert.addAction(cancelAction)
         
         present(alert, animated: true)
+        
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "delete")
     }
     
     @objc private func addButtonDidTap() {
@@ -267,6 +283,8 @@ final class TrackersViewController: UIViewController {
         vc.delegate = self
         vc.dateOfTrackerCreation = datePicker.date.withoutTime
         self.present(vc, animated: true, completion: nil)
+        
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "add_track")
     }
     
     @objc private func datePickerValueChanged() {
@@ -352,6 +370,8 @@ extension TrackersViewController: TrackerCellDelegate {
         trackerRecordStore.toggleTracker(tracker.id, on: datePicker.date)
         
         collectionView.reloadData()
+        
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "track")
     }
 }
 
