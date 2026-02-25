@@ -34,6 +34,12 @@
 "done_trackers" = "Completed";
 "not_done_trackers" = "Not completed";
 "not_found" = "Nothing found";
+"statisticsView.no_statistics_error" = "Nothing to analyze yet";
+"statisticsView.best_period" = "Best period";
+"statisticsView.ideal_days" = "Perfect days";
+"statisticsView.count_of_done_trackers" = "Trackers completed";
+"statisticsView.average_amount" = "Average value";
+"categoriesView.error_label" = "Habits and events can be grouped by meaning";
 
 // Full weekday names
 "weekday_monday" = "Monday";

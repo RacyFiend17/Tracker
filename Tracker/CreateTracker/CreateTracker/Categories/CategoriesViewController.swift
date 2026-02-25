@@ -18,7 +18,10 @@ final class CategoriesViewController: UIViewController {
     private lazy var errorLabel: UILabel = {
         let errorLabel = UILabel()
         errorLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        errorLabel.text = "trackers_page.error_title".localized
+        errorLabel.text = "categoriesView.error_label".localized
+        errorLabel.numberOfLines = 0
+        errorLabel.lineBreakMode = .byWordWrapping
+        errorLabel.textAlignment = .center
         return errorLabel
     } ()
     
@@ -98,7 +101,6 @@ final class CategoriesViewController: UIViewController {
             createButton.heightAnchor.constraint(equalToConstant: 60),
             
             errorImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            errorImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             errorImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 246),
             errorImageView.heightAnchor.constraint(equalToConstant: 80),
             errorImageView.widthAnchor.constraint(equalToConstant: 80),

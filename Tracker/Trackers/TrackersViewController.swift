@@ -217,7 +217,7 @@ final class TrackersViewController: UIViewController {
         
         if searchTextField.text?.isEmpty == false {
             errorLabel.text = "not_found".localized
-            errorImageView.image = UIImage(resource: .notFound)
+            errorImageView.image = UIImage(resource: .notFoundError)
         }
     }
     

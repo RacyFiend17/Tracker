@@ -9,6 +9,7 @@ final class TrackerStore: NSObject {
     private let trackerRecordStore: TrackerRecordStoreProtocol
     private let fetchRequestController: NSFetchedResultsController<TrackerCategoryCoreData>
     var onChange: (() -> Void)?
+    var onStatisticsChange: (() -> Void)?
     
     init(context: NSManagedObjectContext = ModelDataStack.shared.context, trackerRecordStore: TrackerRecordStoreProtocol) {
         self.context = context
@@ -50,6 +51,26 @@ extension TrackerStore: TrackerStoreProtocol {
         let filteredCategories = categories.filter { !filteredTrackers(for: $0, on: currentDate).isEmpty }
 
         return filteredCategories.count
+    }
+    
+    func bestPeriod() -> Int {
+        let request1: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        guard let trackers = try? context.fetch(request1) else {
+            return 0
+        }
+            
+            let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+            
+            var maxCount = 0
+            
+            for tracker in trackers {
+                guard let id = tracker.id else { continue }
+                request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+                let count = (try? context.count(for: request)) ?? 0
+                maxCount = max(maxCount, count)
+            }
+            
+            return maxCount
     }
     
     func numberOfItems(in section: Int, on currentDate: Date) -> Int {
@@ -140,6 +161,8 @@ extension TrackerStore: TrackerStoreProtocol {
         trackerCD.dateCreated = tracker.dateCreated
         trackerCD.category = category
         
+        AppSettings.areAnyTrackers = true
+        
         ModelDataStack.shared.saveContext()
     }
     
@@ -197,6 +220,71 @@ extension TrackerStore: TrackerStoreProtocol {
             }
         } catch {
             assertionFailure("Failed to delete tracker: \(error)")
+        }
+        
+        let recordRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        recordRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        guard let records = try? context.fetch(recordRequest) else { return }
+        for record in records {
+            context.delete(record)
+        }
+        ModelDataStack.shared.saveContext()
+    }
+    
+    func idealDays() -> Int {
+        let recordRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        
+        guard let records = try? context.fetch(recordRequest),
+              !records.isEmpty else {
+            return 0
+        }
+        
+        // Группируем выполнения по датам
+        var recordsByDate: [Date: [UUID]] = [:]
+        
+        for record in records {
+            guard let date = record.date,
+                  let id = record.id else { continue }
+            
+            recordsByDate[date, default: []].append(id)
+        }
+        
+        var idealDaysCount = 0
+        
+        for (date, completedIDs) in recordsByDate {
+            
+            let weekday = Calendar.current.component(.weekday, from: date)
+            
+            let trackerRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+            
+            // Фильтр по дню недели
+            trackerRequest.predicate = predicateForWeekday(weekday)
+            
+            guard let plannedTrackers = try? context.fetch(trackerRequest) else { continue }
+            
+            let plannedIDs = plannedTrackers.compactMap { $0.id }
+            
+            let completedSet = Set(completedIDs)
+            let plannedSet = Set(plannedIDs)
+            
+            if !plannedSet.isEmpty && completedSet == plannedSet {
+                idealDaysCount += 1
+            }
+        }
+        
+        return idealDaysCount
+    }
+    
+    private func predicateForWeekday(_ weekday: Int) -> NSPredicate {
+        switch weekday {
+        case 1: return NSPredicate(format: "isSunday == YES")
+        case 2: return NSPredicate(format: "isMonday == YES")
+        case 3: return NSPredicate(format: "isTuesday == YES")
+        case 4: return NSPredicate(format: "isWednesday == YES")
+        case 5: return NSPredicate(format: "isThursday == YES")
+        case 6: return NSPredicate(format: "isFriday == YES")
+        case 7: return NSPredicate(format: "isSaturday == YES")
+        default: return NSPredicate(value: false)
         }
     }
     
@@ -317,6 +405,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(
         _ controller: NSFetchedResultsController<NSFetchRequestResult>
     ) {
+        onStatisticsChange?()
         onChange?()
     }
 }

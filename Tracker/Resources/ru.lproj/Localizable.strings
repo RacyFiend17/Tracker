@@ -33,7 +33,13 @@
 "trackers_for_today" = "Трекеры на сегодня";
 "done_trackers" = "Завершенные";
 "not_done_trackers" = "Не завершенные";
+"categoriesView.error_label" = "Привычки и события можно \n объединить по смыслу";
 "not_found" = "Ничего не найдено";
+"statisticsView.no_statistics_error" = "Анализировать пока нечего";
+"statisticsView.best_period" = "Лучший период";
+"statisticsView.ideal_days" = "Идеальные дни";
+"statisticsView.count_of_done_trackers" = "Трекеров завершено";
+"statisticsView.average_amount" = "Среднее значение";
 
 // Full weekday names
 "weekday_monday" = "Понедельник";

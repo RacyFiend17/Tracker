@@ -12,7 +12,8 @@ final class TabBarViewController: UITabBarController {
     }
     
     private func setupTabBarControllers() {
-        let statisticsViewController = StatisticsViewController()
+        let statisticsService = StatisticsService.shared
+        let statisticsViewController = StatisticsViewController(statisticsService: statisticsService)
         let trackerRecordStore = TrackerRecordStore()
         let trackerStore = TrackerStore(trackerRecordStore: trackerRecordStore)
         let trackersViewController = TrackersViewController(trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)

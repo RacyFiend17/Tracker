@@ -4,6 +4,12 @@ enum AppSettings {
     
     private static let onboardingKey = "onboardingCompleted"
     private static let selectedFilterKey = "selectedTrackerFilter"
+    private static let areAnyTrackersKey = "areAnyTrackers"
+    
+    static var areAnyTrackers: Bool {
+        get { UserDefaults.standard.bool(forKey: areAnyTrackersKey) }
+        set { UserDefaults.standard.set(newValue, forKey: areAnyTrackersKey) }
+    }
     
     static var isOnboardingCompleted: Bool {
         get { UserDefaults.standard.bool(forKey: onboardingKey) }
