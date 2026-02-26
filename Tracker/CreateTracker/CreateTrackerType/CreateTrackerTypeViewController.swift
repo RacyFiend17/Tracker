@@ -9,18 +9,18 @@ final class CreateTrackerTypeViewController: UIViewController {
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .black
-        titleLabel.text = "Создание трекера"
+        titleLabel.textColor = .ypBlack
+        titleLabel.text = "creation_of_tracker".localized
         return titleLabel
     } ()
     
     private lazy var habitButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.setTitle("Привычка", for: .normal)
+        button.setTitle("habit".localized, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.titleLabel?.textAlignment = .center
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(resource: .ypWhite), for: .normal)
         
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -32,10 +32,10 @@ final class CreateTrackerTypeViewController: UIViewController {
     private lazy var irregularButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.setTitle("Нерегулярное событие", for: .normal)
+        button.setTitle("not_regular_event".localized, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.titleLabel?.textAlignment = .center
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(resource: .ypWhite), for: .normal)
         
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -51,7 +51,7 @@ final class CreateTrackerTypeViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(resource: .ypWhite)
         
         view.addSubviews([titleLabel, habitButton, irregularButton])
         view.translatesAutoResizingMaskFalseTo(view.subviews)

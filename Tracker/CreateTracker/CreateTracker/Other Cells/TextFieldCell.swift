@@ -11,7 +11,7 @@ final class TextFieldCell: UITableViewCell {
 
     private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(resource: .ypLightGray).withAlphaComponent(0.3)
+        view.backgroundColor = .ypLightGray.withAlphaComponent(0.3)
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         return view
@@ -19,7 +19,7 @@ final class TextFieldCell: UITableViewCell {
     
     private let textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = "input_tracker_name".localized
         textField.backgroundColor = .clear
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.addTarget(self, action: #selector(textFieldChangedContent), for: .editingChanged)
@@ -45,12 +45,15 @@ final class TextFieldCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(with text: String) {
+        textField.text = text
+    }
+    
     @objc private func textFieldChangedContent() {
         deleteButton.isHidden = textField.text?.isEmpty == true
     }
     
     @objc private func textFieldDidEndEditing(){
-        
         delegate?.textFieldDidEndEditing(with: textField.text)
     }
     

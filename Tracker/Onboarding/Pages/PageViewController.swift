@@ -45,10 +45,10 @@ final class PageViewController: UIViewController {
         switch indexOfViewController {
         case 0:
             imageView.image = UIImage(resource: .firstOnboardingPage)
-            textLabel.text = "Отслеживайте только то, что хотите"
+            textLabel.text = NSLocalizedString("onboarding.page_tracking.title", comment: "")
         case 1:
             imageView.image = UIImage(resource: .secondOnboardingPage)
-            textLabel.text = "Даже если это не литры воды и йога"
+            textLabel.text = NSLocalizedString("onboarding.page_freedom.title", comment: "")
         default:
             break
         }

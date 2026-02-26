@@ -1,27 +1,15 @@
 import UIKit
 
-protocol ScheduleCellDelegate: AnyObject {
-    func switchButtonChangedValue(_ cell: ScheduleCell, isOn: Bool)
-}
-
-final class ScheduleCell: UITableViewCell {
+final class FilterCell: UITableViewCell {
     
-    static let reuseIdentifier = "ScheduleCell"
-    weak var delegate: ScheduleCellDelegate?
+    static let reuseIdentifier = "FilterCell"
     
     private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(resource: .ypLightGray).withAlphaComponent(0.3)
+        view.backgroundColor = .ypLightGray.withAlphaComponent(0.3)
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         return view
-    }()
-    
-    private let switchButton: UISwitch = {
-        let switchButton = UISwitch()
-        switchButton.isOn = false
-        switchButton.addTarget(self, action: #selector(switchButtonChangedValue), for: .valueChanged)
-        return switchButton
     }()
     
     private let titleLabel: UILabel = {
@@ -30,9 +18,15 @@ final class ScheduleCell: UITableViewCell {
         return label
     }()
     
+    private let checkmark: UIImageView = {
+        let imageView = UIImageView(image: UIImage(resource: .checkmark))
+        imageView.tintColor = .clear
+        return imageView
+    }()
+    
     private let separatorView: UIView = {
         let separator = UIView()
-        separator.backgroundColor = UIColor.black.withAlphaComponent(0.15)
+        separator.backgroundColor = .ypBlack.withAlphaComponent(0.15)
         separator.isHidden = true
         return separator
     }()
@@ -50,7 +44,7 @@ final class ScheduleCell: UITableViewCell {
         backgroundColor = .clear
         selectionStyle = .none
         
-        contentView.addSubviews([containerView, separatorView, switchButton, titleLabel])
+        contentView.addSubviews([containerView, separatorView, titleLabel, checkmark])
         contentView.translatesAutoResizingMaskFalseTo(contentView.subviews)
         
         
@@ -61,13 +55,14 @@ final class ScheduleCell: UITableViewCell {
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             containerView.heightAnchor.constraint(equalToConstant: 75),
             
-            switchButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            switchButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            switchButton.heightAnchor.constraint(equalToConstant: 31),
-            
             titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: switchButton.trailingAnchor, constant: -16),
+            titleLabel.trailingAnchor.constraint(equalTo: checkmark.trailingAnchor, constant: -1),
             titleLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            
+            checkmark.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+            checkmark.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            checkmark.heightAnchor.constraint(equalToConstant: 24),
+            checkmark.widthAnchor.constraint(equalToConstant: 24),
             
             separatorView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             separatorView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
@@ -76,9 +71,10 @@ final class ScheduleCell: UITableViewCell {
         ])
     }
     
-    func configure(title: String, showSeparator: Bool, roundedCorners: UIRectCorner?) {
+    func configure(title: String, showSeparator: Bool, roundedCorners: UIRectCorner?, isSelected: Bool) {
         titleLabel.text = title
         separatorView.isHidden = !showSeparator
+        checkmark.isHidden = !isSelected
         
         if let corners = roundedCorners {
             containerView.layer.cornerRadius = 16
@@ -88,8 +84,8 @@ final class ScheduleCell: UITableViewCell {
         }
     }
     
-    @objc private func switchButtonChangedValue() {
-        delegate?.switchButtonChangedValue(self, isOn: self.switchButton.isOn)
+    func changeCheckmarkVisibility(isVisible: Bool) {
+        checkmark.isHidden = !isVisible
     }
 }
 

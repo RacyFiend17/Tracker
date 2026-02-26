@@ -8,7 +8,7 @@ final class TrackerCellHeader: UICollectionReusableView {
         super.init(frame: frame)
         
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
-        titleLabel.textColor = UIColor(resource: .ypBlack)
+        titleLabel.textColor = .ypBlack
         
         addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false

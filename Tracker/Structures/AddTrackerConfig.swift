@@ -8,15 +8,15 @@ protocol AddTrackerConfig {
 }
 
 struct HabitConfig: AddTrackerConfig {
-    let title = "Новая привычка"
+    let title = "new_habit".localized
     let isRegularTracker = true
-    let navigationCellTitles = ["Категория", "Расписание"]
+    let navigationCellTitles = ["category".localized, "schedule".localized]
     var navigationCellSubtitles: [String] = ["", ""]
 }
 
 struct IrregularConfig: AddTrackerConfig {
-    let title = "Новое нерегулярное событие"
+    let title = "new_not_regular_event".localized
     let isRegularTracker = false
-    let navigationCellTitles = ["Категория"]
+    let navigationCellTitles = ["category".localized]
     var navigationCellSubtitles: [String] = [""]
 }

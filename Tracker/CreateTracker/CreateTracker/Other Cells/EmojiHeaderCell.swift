@@ -14,7 +14,7 @@ final class EmojiHeaderCell: UITableViewCell {
         selectionStyle = .none
         
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
-        titleLabel.textColor = UIColor(resource: .ypBlack)
+        titleLabel.textColor = .ypBlack
         titleLabel.text = "Emoji"
         
         contentView.addSubview(titleLabel)

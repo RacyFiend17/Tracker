@@ -15,7 +15,7 @@ protocol CreateTrackerTypeDismissDelegate: AnyObject {
 final class CreateTrackerViewController: UIViewController {
     
     // MARK: - Delegates
-
+    
     weak var delegate: CreateTrackerViewControllerDelegate?
     weak var parentTypeControllerDelegate: CreateTrackerTypeDismissDelegate?
     
@@ -24,7 +24,7 @@ final class CreateTrackerViewController: UIViewController {
     private var trackerConfig: AddTrackerConfig
     private var chosenTrackerSchedule: [Weekday] = []
     private var chosenTrackerName: String = ""
-    private var chosenCategoryName: String = "Че-то там"
+    private var chosenCategoryName: String = ""
     private var chosenTrackerEmoji: String = ""
     private var chosenTrackerColor: UIColor = .white
     var dateOfTrackerCreation = Date().withoutTime
@@ -35,7 +35,7 @@ final class CreateTrackerViewController: UIViewController {
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .black
+        titleLabel.textColor = .ypBlack
         titleLabel.text = trackerConfig.title
         
         return titleLabel
@@ -57,7 +57,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle("cancel".localized, for: .normal)
         button.backgroundColor = .clear
         button.layer.borderColor = UIColor(resource: .ypRed).cgColor
         button.layer.borderWidth = 1
@@ -72,7 +72,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle("create".localized, for: .normal)
         button.backgroundColor = UIColor(resource: .ypGray)
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
@@ -109,7 +109,7 @@ final class CreateTrackerViewController: UIViewController {
     // MARK: - Setup Methods
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(resource: .ypWhite)
         
         view.addSubviews([titleLabel, tableView, createButton, cancelButton])
         view.translatesAutoResizingMaskFalseTo(view.subviews)
@@ -169,7 +169,7 @@ final class CreateTrackerViewController: UIViewController {
                     schedule: chosenTrackerSchedule,
                     trackerType: TrackerType.habit,
                     dateCreated: dateOfTrackerCreation
-                    )
+                )
                 dismiss(animated: true)
                 parentTypeControllerDelegate?.dismissCreateTrackerTypeViewController()
                 delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
@@ -182,12 +182,12 @@ final class CreateTrackerViewController: UIViewController {
                     schedule: Weekday.allCases,
                     trackerType: TrackerType.habit,
                     dateCreated: dateOfTrackerCreation
-                    )
+                )
                 
                 dismiss(animated: true)
                 parentTypeControllerDelegate?.dismissCreateTrackerTypeViewController()
                 delegate?.didCreateTracker(newTracker, with: chosenCategoryName)
-            
+                
             }
         }
     }
@@ -215,7 +215,10 @@ final class CreateTrackerViewController: UIViewController {
     private func setCreateButtonActive(_ isActive: Bool) {
         if isActive {
             createButton.isEnabled = true
-            createButton.backgroundColor = UIColor(resource: .ypBlack)
+            createButton.backgroundColor = .ypBlack
+            if traitCollection.userInterfaceStyle == .dark {
+                createButton.setTitleColor(.black, for: .normal)
+            }
         }
     }
 }
@@ -286,7 +289,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
                            roundedCorners: cornerStyle)
             
             return cell
-        
+            
         case 2:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: EmojiHeaderCell.reuseIdentifier,
@@ -306,7 +309,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
             cell.delegate = self
-            cell.configure()
+            cell.configure(emoji: chosenTrackerEmoji)
             return cell
             
         case 4:
@@ -328,7 +331,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
             cell.delegate = self
-            cell.configure()
+            cell.configure(color: chosenTrackerColor)
             return cell
             
         default:
@@ -340,11 +343,23 @@ extension CreateTrackerViewController: UITableViewDataSource {
 extension CreateTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         view.endEditing(true)
-        if indexPath.section == 1 && indexPath.row == 1 {
+        guard indexPath.section == 1 else { return }
+        switch indexPath.row {
+        case 0:
+            let store = TrackerCategoryStore()
+            let vm = CategoriesViewModel(store: store)
+            let vc = CategoriesViewController()
+            vc.initialize(viewModel: vm)
+            vc.delegate = self
+            self.present(vc, animated: true)
+        case 1:
             let vc = ScheduleViewController()
             vc.delegate = self
             self.present(vc, animated: true)
+        default :
+            break
         }
+    
     }
 }
 
@@ -356,11 +371,11 @@ extension CreateTrackerViewController: ScheduleViewControllerDelegate {
             
             switch days.count {
             case 7:
-                daysString = "Каждый день"
+                daysString = "every_day".localized
             default :
                 let sortedDays = days.sorted { $0.rawValue < $1.rawValue }
                 chosenTrackerSchedule = sortedDays
-                daysString = sortedDays.map { $0.shortRuName }.joined(separator: ", ")
+                daysString = sortedDays.map { $0.localizedShortName }.joined(separator: ", ")
             }
             
             trackerConfig.navigationCellSubtitles[1] = daysString
@@ -370,6 +385,18 @@ extension CreateTrackerViewController: ScheduleViewControllerDelegate {
             
             setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
         }
+    }
+}
+
+extension CreateTrackerViewController: CategoriesViewControllerDelegate {
+    func didSelectCategoryName(_ name: String) {
+        chosenCategoryName = name
+        trackerConfig.navigationCellSubtitles[0] = name
+        
+        let indexPath = IndexPath(row: 0, section: 1)
+        tableView.reloadRows(at: [indexPath], with: .none)
+        
+        setCreateButtonActive(isReadyToCreateTracker(for: trackerConfig))
     }
 }
 

@@ -12,13 +12,14 @@ final class TabBarViewController: UITabBarController {
     }
     
     private func setupTabBarControllers() {
-        let statisticsViewController = StatisticsViewController()
-        let trackerStore = TrackerStore()
+        let statisticsService = StatisticsService.shared
+        let statisticsViewController = StatisticsViewController(statisticsService: statisticsService)
         let trackerRecordStore = TrackerRecordStore()
+        let trackerStore = TrackerStore(trackerRecordStore: trackerRecordStore)
         let trackersViewController = TrackersViewController(trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
         
-        trackersViewController.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .trackersTabBarLogo), tag: 0)
-        statisticsViewController.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(resource: .statisticsTabBarLogo), tag: 1)
+        trackersViewController.tabBarItem = UITabBarItem(title: "trackers".localized, image: UIImage(resource: .trackersTabBarLogo), tag: 0)
+        statisticsViewController.tabBarItem = UITabBarItem(title: "statistics".localized, image: UIImage(resource: .statisticsTabBarLogo), tag: 1)
         
         viewControllers = [trackersViewController, statisticsViewController]
     }
@@ -27,7 +28,7 @@ final class TabBarViewController: UITabBarController {
         
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = UIColor(resource: .ypWhite)
         
         tabBar.standardAppearance = appearance
         if #available(iOS 15.0, *) {

@@ -14,8 +14,8 @@ final class ColorHeaderCell: UITableViewCell {
         selectionStyle = .none
         
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
-        titleLabel.textColor = UIColor(resource: .ypBlack)
-        titleLabel.text = "Цвет"
+        titleLabel.textColor = .ypBlack
+        titleLabel.text = "color".localized
         
         contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false

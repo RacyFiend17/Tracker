@@ -7,8 +7,8 @@ final class OnboardingViewController: UIPageViewController {
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
         
-        pageControl.currentPageIndicatorTintColor = UIColor(resource: .ypBlack)
-        pageControl.pageIndicatorTintColor = UIColor(resource: .ypBlack).withAlphaComponent(0.3)
+        pageControl.currentPageIndicatorTintColor = .ypBlack
+        pageControl.pageIndicatorTintColor = .ypBlack.withAlphaComponent(0.3)
         
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
@@ -16,7 +16,7 @@ final class OnboardingViewController: UIPageViewController {
     
     private lazy var excitementButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(NSLocalizedString("onboarding.cta.start", comment: ""), for: .normal)
         button.backgroundColor = .ypBlack
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
