@@ -23,7 +23,7 @@ final class StatisticsService: StatisticsServiceProtocol {
     }
     
     var completedTrackers: Int {
-        trackerRecordStore.completedTrackers()
+        trackerRecordStore.completedTrackers
     }
     
     var averageTasksPerDay: Int {
@@ -35,7 +35,14 @@ final class StatisticsService: StatisticsServiceProtocol {
     let trackerStore: TrackerStoreProtocol
     let trackerRecordStore: TrackerRecordStoreProtocol
     
-    static let shared = StatisticsService(trackerStore: TrackerStore(trackerRecordStore: TrackerRecordStore()), trackerRecordStore: TrackerRecordStore())
+    static let shared: StatisticsService = {
+        let recordStore = TrackerRecordStore()
+        let trackerStore = TrackerStore(trackerRecordStore: recordStore)
+        return StatisticsService(
+            trackerStore: trackerStore,
+            trackerRecordStore: recordStore
+        )
+    }()
     
     private init(
         trackerStore: TrackerStoreProtocol,
@@ -47,9 +54,9 @@ final class StatisticsService: StatisticsServiceProtocol {
         trackerRecordStore.onRecordsChanged = { [weak self] in
             self?.onStatisticsChanged?()
         }
-    
+        
         trackerStore.onStatisticsChange = { [weak self] in
-            self?.onStatisticsChanged
+            self?.onStatisticsChanged?()
         }
     }
 }

@@ -5,7 +5,7 @@ final class CreateCategoryViewController: UIViewController {
     private let viewModel: CreateCategoryViewModel
     var onCategoryCreated: (() -> Void)?
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.text = "new_category".localized
         titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
@@ -15,7 +15,7 @@ final class CreateCategoryViewController: UIViewController {
         return titleLabel
     }()
     
-    private let containerView: UIView = {
+    private lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = .ypLightGray.withAlphaComponent(0.3)
         view.layer.cornerRadius = 16
@@ -23,18 +23,17 @@ final class CreateCategoryViewController: UIViewController {
         return view
     }()
     
-    private let textField: UITextField = {
+    private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "input_category_name".localized
         textField.backgroundColor = .clear
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.addTarget(self, action: #selector(textFieldChangedContent), for: .editingChanged)
-//        textField.addTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEnd)
         
         return textField
     }()
     
-    private let deleteButton: UIButton = {
+    private lazy var deleteButton: UIButton = {
         let deleteButton = UIButton()
         deleteButton.setImage(UIImage(resource: .deleteTextFieldButton), for: .normal)
         deleteButton.addTarget(self, action: #selector(deleteTextInTextField), for: .touchUpInside)
@@ -42,7 +41,7 @@ final class CreateCategoryViewController: UIViewController {
         return deleteButton
     }()
 
-    private let doneButton: UIButton = {
+    private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("done".localized, for: .normal)
         button.backgroundColor = .ypGray

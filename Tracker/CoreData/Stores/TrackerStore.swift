@@ -35,21 +35,21 @@ final class TrackerStore: NSObject {
         do {
             try fetchRequestController.performFetch()
         } catch {
-            fatalError("Failed to fetch categories")
+            assertionFailure("Failed to fetch categories")
         }
     }
 }
 
 
 extension TrackerStore: TrackerStoreProtocol {
-
+    
     func numberOfSections() -> Int {
         guard let categories = fetchRequestController.fetchedObjects else {
             return 0
         }
         
         let filteredCategories = categories.filter { !filteredTrackers(for: $0, on: currentDate).isEmpty }
-
+        
         return filteredCategories.count
     }
     
@@ -58,19 +58,19 @@ extension TrackerStore: TrackerStoreProtocol {
         guard let trackers = try? context.fetch(request1) else {
             return 0
         }
-            
-            let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-            
-            var maxCount = 0
-            
-            for tracker in trackers {
-                guard let id = tracker.id else { continue }
-                request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-                let count = (try? context.count(for: request)) ?? 0
-                maxCount = max(maxCount, count)
-            }
-            
-            return maxCount
+        
+        let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        
+        var maxCount = 0
+        
+        for tracker in trackers {
+            guard let id = tracker.id else { continue }
+            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            let count = (try? context.count(for: request)) ?? 0
+            maxCount = max(maxCount, count)
+        }
+        
+        return maxCount
     }
     
     func numberOfItems(in section: Int, on currentDate: Date) -> Int {
@@ -81,7 +81,7 @@ extension TrackerStore: TrackerStoreProtocol {
         let filteredCategories = categories.filter { !filteredTrackers(for: $0, on: currentDate).isEmpty }
         
         let category = filteredCategories[section]
-         
+        
         return filteredTrackers(for: category, on: currentDate).count
     }
     
@@ -229,6 +229,8 @@ extension TrackerStore: TrackerStoreProtocol {
             context.delete(record)
         }
         ModelDataStack.shared.saveContext()
+        
+        areAnyTrackers()
     }
     
     func idealDays() -> Int {
@@ -277,14 +279,14 @@ extension TrackerStore: TrackerStoreProtocol {
     
     private func predicateForWeekday(_ weekday: Int) -> NSPredicate {
         switch weekday {
-        case 1: return NSPredicate(format: "isSunday == YES")
-        case 2: return NSPredicate(format: "isMonday == YES")
-        case 3: return NSPredicate(format: "isTuesday == YES")
-        case 4: return NSPredicate(format: "isWednesday == YES")
-        case 5: return NSPredicate(format: "isThursday == YES")
-        case 6: return NSPredicate(format: "isFriday == YES")
-        case 7: return NSPredicate(format: "isSaturday == YES")
-        default: return NSPredicate(value: false)
+        case 1: NSPredicate(format: "isSunday == YES")
+        case 2: NSPredicate(format: "isMonday == YES")
+        case 3: NSPredicate(format: "isTuesday == YES")
+        case 4: NSPredicate(format: "isWednesday == YES")
+        case 5: NSPredicate(format: "isThursday == YES")
+        case 6: NSPredicate(format: "isFriday == YES")
+        case 7: NSPredicate(format: "isSaturday == YES")
+        default: NSPredicate(value: false)
         }
     }
     
@@ -322,21 +324,22 @@ extension TrackerStore: TrackerStoreProtocol {
     }
     
     private func applyFilter() {
+        
         guard let weekday = currentDate.weekday else { return }
         
         let weekdayKey = weekday.coreDataKey
-
+        
         var predicates: [NSPredicate] = []
         
         switch currentTrackerFilter {
-        case .all:
+        case .all, .completed, .uncompleted:
             break
-        case .today, .completed, .uncompleted:
+        case .today:
             let weekdayPredicate = NSPredicate(format: "ANY trackers.%K == YES", weekdayKey)
             let datePredicate = NSPredicate(format: "ANY trackers.dateCreated <= %@", currentDate.withoutTime as NSDate)
             predicates = [weekdayPredicate, datePredicate]
         }
-
+        
         if let query = searchQuery, !query.isEmpty {
             let searchPredicate = NSPredicate(format: "ANY trackers.name CONTAINS[c] %@", query)
             predicates.append(searchPredicate)
@@ -346,6 +349,16 @@ extension TrackerStore: TrackerStoreProtocol {
         
         try? fetchRequestController.performFetch()
         onChange?()
+    }
+    
+    private func areAnyTrackers() {
+        let request: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        
+        let count = (try? context.count(for: request)) ?? 0
+        
+        AppSettings.areAnyTrackers = count > 0
+        
+        onStatisticsChange?()
     }
     
     private func filteredTrackers(for category: TrackerCategoryCoreData, on currentDate: Date) -> [TrackerCoreData] {
@@ -364,31 +377,34 @@ extension TrackerStore: TrackerStoreProtocol {
         
         switch currentTrackerFilter {
         case .all:
-            return filteredTrackers
+            return filteredTrackers.filter { tracker in
+                (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+            }
         case .today:
             let weekdayKey = weekday.coreDataKey
             
             return filteredTrackers.filter { tracker in
-                    tracker.value(forKey: weekdayKey) as? Bool == true
-                    && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
-                }
+                tracker.value(forKey: weekdayKey) as? Bool == true
+                && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+            }
         case .completed:
-            let weekdayKey = weekday.coreDataKey
+            //            let weekdayKey = weekday.coreDataKey
             
             return filteredTrackers.filter { tracker in
-                    tracker.value(forKey: weekdayKey) as? Bool == true
-                    && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
-                    && trackerRecordStore.isTrackerCompleted(tracker.id ?? UUID(), on: currentDate.withoutTime)
-                }
+                //                tracker.value(forKey: weekdayKey) as? Bool == true
+                (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+                && trackerRecordStore.isTrackerCompleted(tracker.id ?? UUID(), on: currentDate.withoutTime)
+            }
         case .uncompleted:
-            let weekdayKey = weekday.coreDataKey
+            //            let weekdayKey = weekday.coreDataKey
             
             return filteredTrackers.filter { tracker in
-                    tracker.value(forKey: weekdayKey) as? Bool == true
-                    && (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
-                    && !trackerRecordStore.isTrackerCompleted(tracker.id ?? UUID(), on: currentDate.withoutTime)
                 
-                }
+                //                tracker.value(forKey: weekdayKey) as? Bool == true
+                (tracker.dateCreated ?? .distantPast) <= currentDate.withoutTime
+                && !trackerRecordStore.isTrackerCompleted(tracker.id ?? UUID(), on: currentDate.withoutTime)
+                
+            }
         }
     }
     

@@ -30,12 +30,12 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
             return []
         }
     }
-
-func addCategory(title: String) {
-    let category = TrackerCategoryCoreData(context: context)
-    category.title = title
     
-    ModelDataStack.shared.saveContext()
-}
+    func addCategory(title: String) {
+        let category = TrackerCategoryCoreData(context: context)
+        category.title = title
+        
+        ModelDataStack.shared.saveContext()
+    }
 }
 

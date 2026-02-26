@@ -115,14 +115,10 @@ final class CategoriesViewController: UIViewController {
         
         if numberOfRows > 0 {
             tableView.reloadData()
-            tableView.isHidden = false
-            errorLabel.isHidden = true
-            errorImageView.isHidden = true
-        } else {
-            tableView.isHidden = true
-            errorLabel.isHidden = false
-            errorImageView.isHidden = false
         }
+        tableView.isHidden = numberOfRows == 0
+        errorLabel.isHidden = numberOfRows > 0
+        errorImageView.isHidden = numberOfRows > 0
     }
     
     @objc private func createButtonDidTap() {

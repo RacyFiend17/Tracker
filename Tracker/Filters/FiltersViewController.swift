@@ -105,7 +105,11 @@ final class FiltersViewController: UIViewController {
             let showSeparator = !isLast
             
             let filterName = filters[indexPath.row].rawValue.localized
-            let isFilterSelected = filters[indexPath.row] == AppSettings.selectedFilter
+            var isFilterSelected = filters[indexPath.row] == AppSettings.selectedFilter
+            
+            if AppSettings.selectedFilter == .all || AppSettings.selectedFilter == .today {
+                isFilterSelected = false
+            }
             
             cell.configure(title: filterName,
                            showSeparator: showSeparator,

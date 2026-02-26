@@ -19,7 +19,7 @@ final class AnalyticsService {
             "screen": screen
         ]
         
-        if let item = item {
+        if let item {
             parameters["item"] = item
         }
         

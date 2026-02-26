@@ -126,6 +126,7 @@ final class TrackersViewController: UIViewController {
         trackerStore.updateFilter(date: datePicker.date)
         
         setupUI()
+        configureCollectionInsets()
         showErrorLabelAndImageViewOrCollectionView()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -142,6 +143,17 @@ final class TrackersViewController: UIViewController {
             super.viewWillDisappear(animated)
             AnalyticsService.shared.sendEvent(event: "close", screen: "Main")
         }
+    
+    private func configureCollectionInsets() {
+        let buttonHeight: CGFloat = 50
+        let bottomSpacing: CGFloat = 30
+        let extraPadding: CGFloat = 16
+        
+        let bottomInset = buttonHeight + bottomSpacing + extraPadding
+        
+        collectionView.contentInset.bottom = bottomInset
+        collectionView.scrollIndicatorInsets.bottom = bottomInset
+    }
     
     private func setupUI() {
         view.backgroundColor = UIColor(resource: .ypWhite)

@@ -6,10 +6,6 @@ protocol EditTrackerViewControllerDelegate: AnyObject {
     func didEditTracker(_ tracker: Tracker, with categoryName: String)
 }
 
-//protocol CreateTrackerTypeDismissDelegate: AnyObject {
-//    func dismissEditTrackerTypeViewController()
-//}
-
 // MARK: - EditTrackerViewController
 
 final class EditTrackerViewController: UIViewController {
@@ -17,7 +13,6 @@ final class EditTrackerViewController: UIViewController {
     // MARK: - Delegates
     
     weak var delegate: EditTrackerViewControllerDelegate?
-//    weak var parentTypeControllerDelegate: EditTrackerTypeDismissDelegate?
     
     // MARK: - Properties
     
@@ -274,7 +269,7 @@ extension EditTrackerViewController: UITableViewDataSource {
             }
             cell.delegate = self
             cell.configure(with: chosenTrackerName)
-            return cell
+            
             return cell
         case 1:
             guard let cell = tableView.dequeueReusableCell(
@@ -386,7 +381,7 @@ extension EditTrackerViewController: UITableViewDelegate {
 
 extension EditTrackerViewController: ScheduleViewControllerDelegate {
     func didSelectDays(_ days: Set<Weekday>) {
-        if !days.isEmpty {
+        guard !days.isEmpty else { return }
             
             var daysString = ""
             
@@ -403,7 +398,6 @@ extension EditTrackerViewController: ScheduleViewControllerDelegate {
             
             let indexPath = IndexPath(row: 1, section: 1)
             tableView.reloadRows(at: [indexPath], with: .none)
-        }
     }
 }
 

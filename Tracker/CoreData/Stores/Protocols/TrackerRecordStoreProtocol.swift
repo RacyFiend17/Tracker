@@ -7,6 +7,6 @@ protocol TrackerRecordStoreProtocol: AnyObject {
     func fetchAllRecords() -> [TrackerRecordCoreData]
     var onRecordsChanged: (() -> Void)? { get set }
     func bestPeriod() -> Int
-    func completedTrackers() -> Int
+    var completedTrackers: Int { get }
     func averageTasksPerDay() -> Int
 }

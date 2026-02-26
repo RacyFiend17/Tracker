@@ -99,7 +99,7 @@ final class StatisticsViewController: UIViewController {
     }
     
     private func showErrorLabelAndImageViewOrCollectionView() {
-        if true {
+        if AppSettings.areAnyTrackers {
             errorLabel.isHidden = true
             errorImageView.isHidden = true
             stackView.isHidden = false
@@ -129,4 +129,4 @@ final class StatisticsViewController: UIViewController {
         ])
     }
 }
-    
+

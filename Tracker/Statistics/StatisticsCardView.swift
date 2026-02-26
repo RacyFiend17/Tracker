@@ -4,23 +4,23 @@ final class StatisticCardView: UIView {
     
     // MARK: - UI
     
-    private let valueLabel: UILabel = {
+    private lazy var valueLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 34, weight: .bold)
         label.textColor = .ypBlack
         return label
     }()
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlack
         return label
     }()
     
-    private let contentStack = UIStackView()
-    private let gradientLayer = CAGradientLayer()
-    private let borderMask = CAShapeLayer()
+    private lazy var contentStack = UIStackView()
+    private lazy var gradientLayer = CAGradientLayer()
+    private lazy var borderMask = CAShapeLayer()
     
     // MARK: - Init
     
